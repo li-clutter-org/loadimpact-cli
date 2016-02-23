@@ -1,1 +1,8 @@
 *.pyc
+.cache
+tests/.cache
+pytestdebug.log
+loadimpact_cli.egg-info/
+build
+.eggs
+dist
