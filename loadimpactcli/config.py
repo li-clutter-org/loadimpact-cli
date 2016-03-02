@@ -14,10 +14,17 @@ See the License for the specific language governing permissions and
 limitations under the License.
 """
 
-import configparser
+from six.moves import configparser
+
+from .errors import CLIError
+
 
 config = configparser.ConfigParser()
 config.read('config.ini')
-user_settings = config['user_settings']
 
-DEFAULT_PROJECT = user_settings.getint('default_project')
+
+try:
+    DEFAULT_PROJECT = config.getint('user_settings', 'default_project')
+    TOKEN = config.get('user_settings', 'token')
+except configparser.Error:
+    raise CLIError("You need to create a config file.")

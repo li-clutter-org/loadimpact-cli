@@ -18,7 +18,7 @@ from setuptools import setup
 
 import os
 import sys
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), 'cli'))
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), 'loadimpactcli'))
 
 from version import __version__
 
@@ -27,16 +27,19 @@ setup(
     version=__version__,
     author='Load Impact',
     author_email='support@loadimpact.com',
-    packages=['cli'],
-    py_modules=['cli'],
+    packages=['loadimpactcli'],
+    py_modules=['loadimpactcli'],
     include_package_data=True,
     install_requires=[
         'click',
-        'loadimpact'
+        'loadimpact',
+        'tzlocal',
+        'six',
     ],
-    entry_points='''
-        [console_scripts]
-        cli=cli.loadimpact_cli:run_cli
-    ''',
+    entry_points={
+        'console_scripts': [
+            'loadimpact=loadimpactcli.loadimpact_cli:run_cli',
+        ],
+    },
     test_suite='tests'
 )

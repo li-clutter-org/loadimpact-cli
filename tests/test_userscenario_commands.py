@@ -15,10 +15,11 @@ limitations under the License.
 """
 
 import unittest
+from collections import namedtuple
 
 from click.testing import CliRunner
 from unittest.mock import MagicMock
-from cli import userscenario_commands
+from loadimpactcli import userscenario_commands
 
 
 class MockValidation(object):
@@ -38,35 +39,47 @@ class TestUserScenarios(unittest.TestCase):
 
     def setUp(self):
         self.runner = CliRunner()
+        Scenario = namedtuple('Scenario', ['script'])
+        self.scenario1 = Scenario('debug')
+        self.scenario2 = Scenario('info')
 
     def test_get_scenario(self):
         client = userscenario_commands.client
-        client.get_user_scenario = MagicMock(return_value=3)
+        client.get_user_scenario = MagicMock(return_value=self.scenario1)
         result = self.runner.invoke(userscenario_commands.get_scenario, ['1'])
 
         assert result.exit_code == 0
-        assert result.output == "3\n"
+        assert result.output == "debug\n"
 
     def test_get_scenario_no_params(self):
         result = self.runner.invoke(userscenario_commands.get_scenario, [])
         assert result.exit_code == 2
 
+    def test_list_scenario(self):
+        client = userscenario_commands.client
+        client.DEFAULT_PROJECT = 1
+        client.list_user_scenarios = MagicMock(return_value=[self.scenario1, self.scenario2])
+        result = self.runner.invoke(userscenario_commands.list_scenarios, ['--project_id', '1'])
+
+        assert result.exit_code == 0
+        assert result.output == "debug\ninfo\n"
+
     def test_create_scenario(self):
         client = userscenario_commands.client
-        client.create_user_scenario = MagicMock(return_value=3)
-        result = self.runner.invoke(userscenario_commands.create_scenario, ['script', '--name', 'jennys', '--project_id', '1'])
+        client.create_user_scenario = MagicMock(return_value=self.scenario1)
+        result = self.runner.invoke(userscenario_commands.create_scenario, ['script', 'jennys', '--project_id', '1'])
         assert result.exit_code == 0
-        assert result.output == "3\n"
+        assert result.output == "debug\n"
 
     def test_create_scenario_no_params(self):
         result = self.runner.invoke(userscenario_commands.create_scenario, [])
         assert result.exit_code == 2
 
     def test_update_scenario(self):
-        userscenario_commands.update_user_scenario_script = MagicMock(return_value="Userscenario1")
+        userscenario_commands.update_user_scenario_script = MagicMock(return_value=self.scenario1)
         result = self.runner.invoke(userscenario_commands.update_scenario, ['1', 'script'])
         assert result.exit_code == 0
-        assert result.output == 'Userscenario1\n'
+        assert result.output == 'debug\n'
 
     def test_update_scenario_no_params(self):
         result = self.runner.invoke(userscenario_commands.update_scenario, [])
@@ -87,6 +100,7 @@ class TestUserScenarios(unittest.TestCase):
         userscenario_commands.get_validation = MagicMock(return_value=MockValidation('Success'))
         userscenario_commands.get_validation_results = MagicMock(return_value=[MockValidationResult(2, 'msg')])
 
+        userscenario_commands.get_formatted_validation_results = MagicMock(return_value='Validation 1')
         result = self.runner.invoke(userscenario_commands.validate_scenario, ['1'])
 
         assert result.exit_code == 0

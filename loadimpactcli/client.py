@@ -16,6 +16,7 @@ limitations under the License.
 import loadimpact
 
 from .version import __version__
+from .config import TOKEN
 
-client = loadimpact.ApiTokenClient(api_token='token')
+client = loadimpact.ApiTokenClient(api_token=TOKEN)
 client.user_agent = "LoadImpactCLI/%s" % (__version__)

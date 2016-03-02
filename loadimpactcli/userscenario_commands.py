@@ -21,8 +21,10 @@ import click
 from .client import client
 from .config import DEFAULT_PROJECT
 
+from tzlocal import get_localzone
 
-@click.group()
+
+@click.group(name='user-scenario')
 @click.pass_context
 def userscenario(ctx):
     pass
@@ -31,14 +33,22 @@ def userscenario(ctx):
 @userscenario.command('get', short_help='Get user-scenario.')
 @click.argument('id')
 def get_scenario(id):
-    userscenario = client.get_user_scenario(id)
-    click.echo(userscenario)
+    user_scenario = client.get_user_scenario(id)
+    click.echo(user_scenario.script)
+
+
+@userscenario.command('list', short_help='List user-scenarios.')
+@click.option('--project_id', default=DEFAULT_PROJECT, envvar='DEFAULT_PROJECT', help='Id of the project to list scenarios from.')
+def list_scenarios(project_id):
+    userscenarios = client.list_user_scenarios(project_id)
+    for userscenario in userscenarios:
+        click.echo(userscenario.script)
 
 
 @userscenario.command('create', short_help='Create user-scenario.')
 @click.argument('script_file', type=click.File('r'))
-@click.option('--name', nargs=1, help='Name of the user-scenario.')
-@click.option('--project_id', default=DEFAULT_PROJECT, help='Id of the project the scenario should be in.')
+@click.argument('name')
+@click.option('--project_id', default=DEFAULT_PROJECT, envvar='DEFAULT_PROJECT', help='Id of the project the scenario should be in.')
 def create_scenario(script_file, name, project_id):
     script = read_file(script_file)
     data = {
@@ -46,16 +56,16 @@ def create_scenario(script_file, name, project_id):
         u"script": script,
         u"project_id": project_id
     }
-    click.echo(client.create_user_scenario(data=data))
+    click.echo(client.create_user_scenario(data=data).script)
 
 
-@userscenario.command('update', short_help='Update user-scenario.')
+@userscenario.command('update', short_help='Update user-scenario script.')
 @click.argument('scenario_id')
 @click.argument('script_file', type=click.File('r'))
 def update_scenario(scenario_id, script_file):
     script = read_file(script_file)
     user_scenario = update_user_scenario_script(scenario_id, script)
-    click.echo(user_scenario)
+    click.echo(user_scenario.script)
 
 
 @userscenario.command('delete', short_help='Delete user-scenario.')
@@ -65,17 +75,14 @@ def delete_scenario(scenario_id):
     click.echo(delete_user_scenario(scenario_id))
 
 
-@userscenario.command('validate', short_help='Validate user-scenario.')
+@userscenario.command('validate', short_help='Validate user-scenario script.')
 @click.argument('scenario_id')
 def validate_scenario(scenario_id):
     user_scenario = client.get_user_scenario(scenario_id)
     validation = get_validation(user_scenario)
     validation_results = get_validation_results(validation)
 
-    for result in validation_results:
-        click.echo("[{0}] {1}".format(result.timestamp, result.message))
-
-    click.echo("Validation completed with status: {0}".format(validation.status_text))
+    click.echo(get_formatted_validation_results(validation_results))
 
 
 def delete_user_scenario(scenario_id):
@@ -103,6 +110,16 @@ def get_validation_results(validation):
 
     validation_results = client.get_user_scenario_validation_result(validation.id)
     return validation_results
+
+
+def get_formatted_validation_results(validation_results):
+    for result in validation_results:
+        result_in_local_time = result.timestamp.astimezone(get_localzone())
+        result_level_formatted = ''
+        if result.level:
+            result_level_formatted = '{0} '.format(result.level)
+
+        return "{0}[{1}] {2}".format(result_level_formatted, result_in_local_time, result.message)
 
 
 def abort_if_false(ctx, param, value):

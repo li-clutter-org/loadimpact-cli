@@ -19,6 +19,8 @@ import click
 
 from .client import client
 
+from loadimpact.exceptions import ConnectionError, UnauthorizedError
+
 
 @click.group()
 @click.pass_context
@@ -28,14 +30,19 @@ def organization(ctx):
 
 @organization.command('list', short_help='List organizations that the user is a member of.')
 def list_organizations():
-    orgs = client.list_organizations()
-    for org in orgs:
-        click.echo(org)
+    try:
+        orgs = client.list_organizations()
+        for org in orgs:
+            click.echo('{0}\t{1}'.format(org.id, org.name))
+    except ConnectionError:
+        click.echo("Cannot connect to Load impact API")
+    except UnauthorizedError:
+        click.echo("Authentication failed")
 
 
-@organization.command('projects', short_help='List the projects of an organization.')
-@click.argument('id')
-def list_organization_projects(id):
-    projects = client.list_organization_projects(id)
+@organization.command('projects', short_help='List the projects of an organization the user is a member of.')
+@click.argument('organization_id')
+def list_organization_projects(organization_id):
+    projects = client.list_organization_projects(organization_id)
     for project in projects:
-        click.echo(project)
+        click.echo('{0}\t{1}'.format(project.id, project.name))
