@@ -17,9 +17,8 @@ limitations under the License.
 
 import click
 
+from loadimpact.exceptions import ConnectionError
 from .client import client
-
-from loadimpact.exceptions import ConnectionError, UnauthorizedError
 
 
 @click.group()
@@ -36,13 +35,14 @@ def list_organizations():
             click.echo('{0}\t{1}'.format(org.id, org.name))
     except ConnectionError:
         click.echo("Cannot connect to Load impact API")
-    except UnauthorizedError:
-        click.echo("Authentication failed")
 
 
 @organization.command('projects', short_help='List the projects of an organization the user is a member of.')
 @click.argument('organization_id')
 def list_organization_projects(organization_id):
-    projects = client.list_organization_projects(organization_id)
-    for project in projects:
-        click.echo('{0}\t{1}'.format(project.id, project.name))
+    try:
+        projects = client.list_organization_projects(organization_id)
+        for project in projects:
+            click.echo('{0}\t{1}'.format(project.id, project.name))
+    except ConnectionError:
+        click.echo("Cannot connect to Load impact API")

@@ -17,11 +17,12 @@ limitations under the License.
 
 from time import sleep
 import click
+from tzlocal import get_localzone
+
+from loadimpact.exceptions import ConnectionError
 
 from .client import client
 from .config import DEFAULT_PROJECT
-
-from tzlocal import get_localzone
 
 
 @click.group(name='user-scenario')
@@ -33,16 +34,22 @@ def userscenario(ctx):
 @userscenario.command('get', short_help='Get user-scenario.')
 @click.argument('id')
 def get_scenario(id):
-    user_scenario = client.get_user_scenario(id)
-    click.echo(user_scenario.script)
+    try:
+        user_scenario = client.get_user_scenario(id)
+        click.echo(user_scenario.script)
+    except ConnectionError:
+        click.echo("Cannot connect to Load impact API")
 
 
 @userscenario.command('list', short_help='List user-scenarios.')
 @click.option('--project_id', default=DEFAULT_PROJECT, envvar='DEFAULT_PROJECT', help='Id of the project to list scenarios from.')
 def list_scenarios(project_id):
-    userscenarios = client.list_user_scenarios(project_id)
-    for userscenario in userscenarios:
-        click.echo(userscenario.script)
+    try:
+        userscenarios = client.list_user_scenarios(project_id)
+        for userscenario in userscenarios:
+            click.echo(userscenario.script)
+    except ConnectionError:
+        click.echo("Cannot connect to Load impact API")
 
 
 @userscenario.command('create', short_help='Create user-scenario.')
@@ -56,7 +63,10 @@ def create_scenario(script_file, name, project_id):
         u"script": script,
         u"project_id": project_id
     }
-    click.echo(client.create_user_scenario(data=data).script)
+    try:
+        click.echo(client.create_user_scenario(data=data).script)
+    except ConnectionError:
+        click.echo("Cannot connect to Load impact API")
 
 
 @userscenario.command('update', short_help='Update user-scenario script.')
@@ -64,25 +74,33 @@ def create_scenario(script_file, name, project_id):
 @click.argument('script_file', type=click.File('r'))
 def update_scenario(scenario_id, script_file):
     script = read_file(script_file)
-    user_scenario = update_user_scenario_script(scenario_id, script)
-    click.echo(user_scenario.script)
+    try:
+        user_scenario = update_user_scenario_script(scenario_id, script)
+        click.echo(user_scenario.script)
+    except ConnectionError:
+        click.echo("Cannot connect to Load impact API")
 
 
 @userscenario.command('delete', short_help='Delete user-scenario.')
 @click.confirmation_option(help='Are you sure you want to delete the user-scenario?')
 @click.argument('scenario_id')
 def delete_scenario(scenario_id):
-    click.echo(delete_user_scenario(scenario_id))
+    try:
+        click.echo(delete_user_scenario(scenario_id))
+    except ConnectionError:
+        click.echo("Cannot connect to Load impact API")
 
 
 @userscenario.command('validate', short_help='Validate user-scenario script.')
 @click.argument('scenario_id')
 def validate_scenario(scenario_id):
-    user_scenario = client.get_user_scenario(scenario_id)
-    validation = get_validation(user_scenario)
-    validation_results = get_validation_results(validation)
-
-    click.echo(get_formatted_validation_results(validation_results))
+    try:
+        user_scenario = client.get_user_scenario(scenario_id)
+        validation = get_validation(user_scenario)
+        validation_results = get_validation_results(validation)
+        click.echo(get_formatted_validation_results(validation_results))
+    except ConnectionError:
+        click.echo("Cannot connect to Load impact API")
 
 
 def delete_user_scenario(scenario_id):

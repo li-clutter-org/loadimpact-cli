@@ -15,16 +15,39 @@ limitations under the License.
 """
 
 from six.moves import configparser
+import os.path
+from sys import platform
+from shutil import copyfile
+from six import raise_from
 
 from .errors import CLIError
 
 
+def get_value_from_usersettings(key):
+    try:
+        return config.get('user_settings', key)
+    except configparser.Error:
+        raise_from(CLIError("You need to configure default project and token."), None)
+
+
 config = configparser.ConfigParser()
-config.read('config.ini')
+home = os.path.expanduser("~")
+config_file_path = ''
+
+# MacOSX
+if platform == "darwin":
+    config_file_path = '{0}/Library/Applications Support/LoadImpact/config.ini'.format(home)
+
+# Linux
+if platform == "linux" or platform == "linux2":
+    config_file_path = '{0}/.config/LoadImpact/config.ini'.format(home)
 
 
-try:
-    DEFAULT_PROJECT = config.getint('user_settings', 'default_project')
-    TOKEN = config.get('user_settings', 'token')
-except configparser.Error:
-    raise CLIError("You need to create a config file.")
+if not os.path.isfile(config_file_path):
+    print("Creating config file in {0}".format(config_file_path))
+    copyfile('config.ini', config_file_path)
+
+config.read(config_file_path)
+
+DEFAULT_PROJECT = os.getenv("DEFAULT_PROJECT") if os.getenv("DEFAULT_PROJECT") else get_value_from_usersettings('default_project')
+LOADIMPACT_API_TOKEN = os.getenv("LOADIMPACT_API_TOKEN") if os.getenv("LOADIMPACT_API_TOKEN") else get_value_from_usersettings('loadimpact_api_token')
