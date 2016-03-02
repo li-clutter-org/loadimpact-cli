@@ -67,7 +67,7 @@ class TestUserScenarios(unittest.TestCase):
     def test_create_scenario(self):
         client = userscenario_commands.client
         client.create_user_scenario = MagicMock(return_value=self.scenario1)
-        result = self.runner.invoke(userscenario_commands.create_scenario, ['script', 'jennys', '--project_id', '1'])
+        result = self.runner.invoke(userscenario_commands.create_scenario, ['script', 'my script', '--project_id', '1'])
         assert result.exit_code == 0
         assert result.output == "debug\n"
 
