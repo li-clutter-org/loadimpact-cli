@@ -1,5 +1,5 @@
 """
-Copyright 2015 Load Impact
+Copyright 2016 Load Impact
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -36,7 +36,7 @@ config_file_path = ''
 
 # MacOSX
 if platform == "darwin":
-    config_file_path = '{0}/Library/Applications Support/LoadImpact/config.ini'.format(home)
+    config_file_path = '{0}/Library/Application Support/LoadImpact/config.ini'.format(home)
 
 # Linux
 if platform == "linux" or platform == "linux2":
@@ -49,5 +49,5 @@ if not os.path.isfile(config_file_path):
 
 config.read(config_file_path)
 
-DEFAULT_PROJECT = os.getenv("DEFAULT_PROJECT") if os.getenv("DEFAULT_PROJECT") else get_value_from_usersettings('default_project')
-LOADIMPACT_API_TOKEN = os.getenv("LOADIMPACT_API_TOKEN") if os.getenv("LOADIMPACT_API_TOKEN") else get_value_from_usersettings('loadimpact_api_token')
+DEFAULT_PROJECT = os.getenv("LOADIMPACT_DEFAULT_PROJECT") if os.getenv("LOADIMPACT_DEFAULT_PROJECT") else get_value_from_usersettings('default_project')
+LOADIMPACT_API_TOKEN = os.getenv("LOADIMPACT_API_TOKEN") if os.getenv("LOADIMPACT_API_TOKEN") else get_value_from_usersettings('api_token')

@@ -31,14 +31,14 @@ The config file should look like this:
 
 ```
 [user_settings]
-loadimpact_api_token=your_api_token
+api_token=your_api_token
 ```
 
 You can also specify the default project you want to work with here by adding the id of the project you wish to work with:
 
 ```
 [user_settings]
-loadimpact_api_token=your_api_token
+api_token=your_api_token
 default_project=2
 ```
 
@@ -47,7 +47,7 @@ Optionally, if you don't want to edit the config-file you can set default projec
 
 ```
 export LOADIMPACT_API_TOKEN='your_api_token'
-export DEFAULT_PROJECT=1
+export LOADIMPACT_DEFAULT_PROJECT=1
 ```
 
 ## Running the cli
