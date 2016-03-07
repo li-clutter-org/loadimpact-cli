@@ -18,11 +18,13 @@ limitations under the License.
 from time import sleep
 import click
 from tzlocal import get_localzone
+from six import raise_from
 
 from loadimpact.exceptions import ConnectionError
 
 from .client import client
 from .config import DEFAULT_PROJECT
+from .errors import CLIError
 
 
 @click.group(name='user-scenario')
@@ -44,6 +46,8 @@ def get_scenario(id):
 @userscenario.command('list', short_help='List user-scenarios.')
 @click.option('--project_id', default=DEFAULT_PROJECT, envvar='DEFAULT_PROJECT', help='Id of the project to list scenarios from.')
 def list_scenarios(project_id):
+    if project_id is None:
+        raise_from(CLIError('You need to provide a project id.'), None)
     try:
         userscenarios = client.list_user_scenarios(project_id)
         for userscenario in userscenarios:
@@ -57,6 +61,8 @@ def list_scenarios(project_id):
 @click.argument('name')
 @click.option('--project_id', default=DEFAULT_PROJECT, envvar='DEFAULT_PROJECT', help='Id of the project the scenario should be in.')
 def create_scenario(script_file, name, project_id):
+    if not project_id:
+        raise CLIError('You need to provide a project id.')
     script = read_file(script_file)
     data = {
         u"name": name,

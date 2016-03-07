@@ -23,11 +23,22 @@ from six import raise_from
 from .errors import CLIError
 
 
-def get_value_from_usersettings(key):
+def get_required_value_from_usersettings(key, env_name):
+    if os.getenv(env_name):
+        return os.getenv(env_name)
     try:
         return config.get('user_settings', key)
     except configparser.Error:
-        raise_from(CLIError("You need to configure default project and token."), None)
+        raise_from(CLIError("You need to configure {0}".format(key)), None)
+
+
+def get_optional_value_from_usersettings(key, env_name):
+    if os.getenv(env_name):
+        return os.getenv(env_name)
+    try:
+        return config.get('user_settings', key)
+    except configparser.Error:
+        pass
 
 
 config = configparser.ConfigParser()
@@ -49,5 +60,6 @@ if not os.path.isfile(config_file_path):
 
 config.read(config_file_path)
 
-DEFAULT_PROJECT = os.getenv("LOADIMPACT_DEFAULT_PROJECT") if os.getenv("LOADIMPACT_DEFAULT_PROJECT") else get_value_from_usersettings('default_project')
-LOADIMPACT_API_TOKEN = os.getenv("LOADIMPACT_API_TOKEN") if os.getenv("LOADIMPACT_API_TOKEN") else get_value_from_usersettings('api_token')
+
+DEFAULT_PROJECT = get_optional_value_from_usersettings('default_project', 'LOADIMPACT_DEFAULT_PROJECT')
+LOADIMPACT_API_TOKEN = get_required_value_from_usersettings('api_token', 'LOADIMPACT_API_TOKEN')
