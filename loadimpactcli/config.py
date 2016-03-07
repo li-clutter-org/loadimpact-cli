@@ -15,7 +15,8 @@ limitations under the License.
 """
 
 from six.moves import configparser
-import os.path
+import errno
+import os
 from sys import platform
 from shutil import copyfile
 from six import raise_from
@@ -56,6 +57,14 @@ if platform == "linux" or platform == "linux2":
 
 if not os.path.isfile(config_file_path):
     print("Creating config file in {0}".format(config_file_path))
+    path = os.path.dirname(config_file_path)
+    try:
+        os.makedirs(path)
+    except OSError as ex:
+        if ex.errno == errno.EEXIST and os.path.isdir(path):
+            pass
+        else:
+            raise_from(CLIError("Unable to create directory {0}".format(path)), ex)
     copyfile('config.ini', config_file_path)
 
 config.read(config_file_path)
