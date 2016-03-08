@@ -30,6 +30,7 @@ setup(
     packages=['loadimpactcli'],
     py_modules=['loadimpactcli'],
     include_package_data=True,
+    data_files=[('', ['config.ini'])],
     install_requires=[
         'click',
         'loadimpact',
@@ -41,5 +42,5 @@ setup(
             'loadimpact=loadimpactcli.loadimpact_cli:run_cli',
         ],
     },
-    test_suite='tests'
+    test_suite='tests',
 )

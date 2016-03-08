@@ -18,32 +18,13 @@ from six.moves import configparser
 import os.path
 from sys import platform
 from shutil import copyfile
-from six import raise_from
-
-from .errors import CLIError
-
-
-def get_required_value_from_usersettings(key, env_name):
-    if os.getenv(env_name):
-        return os.getenv(env_name)
-    try:
-        return config.get('user_settings', key)
-    except configparser.Error:
-        raise_from(CLIError("You need to configure {0}".format(key)), None)
-
-
-def get_optional_value_from_usersettings(key, env_name):
-    if os.getenv(env_name):
-        return os.getenv(env_name)
-    try:
-        return config.get('user_settings', key)
-    except configparser.Error:
-        pass
+import click
 
 
 config = configparser.ConfigParser()
 home = os.path.expanduser("~")
 config_file_path = ''
+current_working_directory = os.getcwd()
 
 # MacOSX
 if platform == "darwin":
@@ -56,9 +37,34 @@ if platform == "linux" or platform == "linux2":
 
 if not os.path.isfile(config_file_path):
     print("Creating config file in {0}".format(config_file_path))
-    copyfile('config.ini', config_file_path)
+    project_config_file_path = "{0}/{1}".format(current_working_directory, 'config.ini')
+    copyfile(project_config_file_path, config_file_path)
 
 config.read(config_file_path)
+
+
+def get_required_value_from_usersettings(key, env_name):
+    """Get value from config or env, if the value is not in the config, prompt the user for it."""
+    if os.getenv(env_name):
+        return os.getenv(env_name)
+    try:
+        return config.get('user_settings', key)
+    except configparser.Error:
+        value = click.prompt('{0}: '.format(env_name))
+        print("Adding key and value to config at {0}".format(config_file_path))
+        with open(config_file_path, 'a') as file:
+            file.write('{0}={1}'.format(key, value))
+        return value
+
+
+def get_optional_value_from_usersettings(key, env_name):
+    """Get value from config or env if it exists."""
+    if os.getenv(env_name):
+        return os.getenv(env_name)
+    try:
+        return config.get('user_settings', key)
+    except configparser.Error:
+        pass
 
 
 DEFAULT_PROJECT = get_optional_value_from_usersettings('default_project', 'LOADIMPACT_DEFAULT_PROJECT')
