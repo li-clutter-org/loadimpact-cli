@@ -15,11 +15,14 @@ limitations under the License.
 """
 
 from six.moves import configparser
-import os.path
+from six import raise_from
+import errno
+import os
 from sys import platform
 from shutil import copyfile
 import click
 
+from .errors import CLIError
 
 config = configparser.ConfigParser()
 home = os.path.expanduser("~")
@@ -35,12 +38,21 @@ if platform == "linux" or platform == "linux2":
     config_file_path = '{0}/.config/LoadImpact/config.ini'.format(home)
 
 
-if not os.path.isfile(config_file_path):
-    print("Creating config file in {0}".format(config_file_path))
-    project_config_file_path = "{0}/{1}".format(current_working_directory, 'config.ini')
-    copyfile(project_config_file_path, config_file_path)
+def get_or_create_config_file_path(config_file_path):
+    """Check if a config file exists globally, otherwise create it."""
+    if not os.path.isfile(config_file_path):
+        print("Creating config file in {0}".format(config_file_path))
+        project_config_file_path = "{0}/{1}".format(current_working_directory, 'config.ini')
 
-config.read(config_file_path)
+        path = os.path.dirname(config_file_path)
+        try:
+            os.makedirs(path)
+        except OSError as ex:
+            if ex.errno == errno.EEXIST and os.path.isdir(path):
+                pass
+            else:
+                raise_from(CLIError("Unable to create directory {0}".format(path)), ex)
+        copyfile(project_config_file_path, config_file_path)
 
 
 def get_required_value_from_usersettings(key, env_name):
@@ -53,7 +65,7 @@ def get_required_value_from_usersettings(key, env_name):
         value = click.prompt('{0}: '.format(env_name))
         print("Adding key and value to config at {0}".format(config_file_path))
         with open(config_file_path, 'a') as file:
-            file.write('{0}={1}'.format(key, value))
+            file.write('\n{0}={1}'.format(key, value))
         return value
 
 
@@ -66,6 +78,9 @@ def get_optional_value_from_usersettings(key, env_name):
     except configparser.Error:
         pass
 
+
+get_or_create_config_file_path(config_file_path)
+config.read(config_file_path)
 
 DEFAULT_PROJECT = get_optional_value_from_usersettings('default_project', 'LOADIMPACT_DEFAULT_PROJECT')
 LOADIMPACT_API_TOKEN = get_required_value_from_usersettings('api_token', 'LOADIMPACT_API_TOKEN')
