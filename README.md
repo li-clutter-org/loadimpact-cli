@@ -1,7 +1,15 @@
-# loadimpact-cli
-Command line interface for Load Impact API version 3
+# Load Impact CLI [![Build Status](https://travis-ci.org/loadimpact/loadimpact-cli.png?branch=master,develop)](https://travis-ci.org/loadimpact/loadimpact-cli) [![Coverage Status](https://coveralls.io/repos/loadimpact/loadimpact-cli/badge.svg?branch=develop&service=github)](https://coveralls.io/github/loadimpact/loadimpact-cli?branch=develop)
+
+Command line interface for Load Impact API version 3.
 
 ## Install
+
+Install using `pip`:
+
+```sh
+pip install loadimpact-cli
+```
+[![PyPI](https://img.shields.io/pypi/v/loadimpact-cli.svg)]() [![PyPI](https://img.shields.io/pypi/dm/loadimpact-cli.svg)]()
 
 Install using setup.py
 
@@ -18,13 +26,13 @@ The config file will be placed:
 For MacOSX:
 
 ```
-/Library/Applications Support/LoadImpact/config.ini
+/Library/Application Support/LoadImpact/config.ini
 ```
 
 For Linux:
 
 ```
-/.config/LoadImpact/config.ini
+~/.config/LoadImpact/config.ini
 ```
 
 The config file should look like this:
