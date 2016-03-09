@@ -17,7 +17,7 @@ limitations under the License.
 
 import click
 
-from loadimpact.exceptions import ConnectionError
+from loadimpact3.exceptions import ConnectionError
 from .client import client
 
 

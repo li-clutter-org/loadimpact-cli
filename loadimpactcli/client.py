@@ -13,16 +13,16 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 """
-import loadimpact
+import loadimpact3
 import click
-from loadimpact.exceptions import UnauthorizedError
+from loadimpact3.exceptions import UnauthorizedError
 
 from .version import __version__
 from .config import LOADIMPACT_API_TOKEN
 
 
 try:
-    client = loadimpact.ApiTokenClient(api_token=LOADIMPACT_API_TOKEN)
+    client = loadimpact3.ApiTokenClient(api_token=LOADIMPACT_API_TOKEN)
     client.user_agent = "LoadImpactCLI/%s" % (__version__)
 except UnauthorizedError:
     click.echo("Authentication failed")
