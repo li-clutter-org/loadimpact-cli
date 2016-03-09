@@ -32,7 +32,7 @@ For MacOSX:
 For Linux:
 
 ```
-/.config/LoadImpact/config.ini
+~/.config/LoadImpact/config.ini
 ```
 
 The config file should look like this:
