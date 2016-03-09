@@ -30,7 +30,7 @@ setup(
     packages=['loadimpactcli'],
     py_modules=['loadimpactcli'],
     include_package_data=True,
-    data_files=[('', ['config.ini'])],
+    data_files=[('', ['config.ini', 'README.md'])],
     install_requires=[
         'click',
         'loadimpact',
@@ -43,4 +43,5 @@ setup(
         ],
     },
     test_suite='tests',
+    test_requires=['coverage'],
 )
