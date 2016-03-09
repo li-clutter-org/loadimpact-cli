@@ -33,7 +33,7 @@ setup(
     data_files=[('', ['config.ini', 'README.md'])],
     install_requires=[
         'click',
-        'loadimpact',
+        'loadimpact-v3',
         'tzlocal',
         'six',
     ],
