@@ -14,12 +14,20 @@ See the License for the specific language governing permissions and
 limitations under the License.
 """
 
+# Without this the config will prompt for a token
+import os
+os.environ['LOADIMPACT_API_TOKEN'] = 'token'
+
 import unittest
 from collections import namedtuple
 
 from click.testing import CliRunner
-from unittest.mock import MagicMock
 from loadimpactcli import organization_commands
+
+try:
+    from unittest.mock import MagicMock
+except ImportError:
+    from mock import MagicMock
 
 
 class TestOrganizations(unittest.TestCase):

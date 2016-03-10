@@ -7,3 +7,7 @@ First BETA release.
 ## v1.0.1 (2016-03-10)
 
 Fixes to setup.py
+
+## v1.0.2 (2016-03-10)
+
+Fixes to running tests.
