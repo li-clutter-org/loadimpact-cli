@@ -27,8 +27,11 @@ setup(
     version=__version__,
     author='Load Impact',
     author_email='support@loadimpact.com',
+    url='http://developers.loadimpact.com/',
     packages=['loadimpactcli'],
     py_modules=['loadimpactcli'],
+    license='LICENSE.txt',
+    description="The Load Impact CLI interfaces with Load Impact's cloud-based performance testing platform",
     include_package_data=True,
     data_files=[('', ['config.ini', 'README.md'])],
     install_requires=[
