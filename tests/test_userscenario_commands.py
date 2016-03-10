@@ -18,8 +18,12 @@ import unittest
 from collections import namedtuple
 
 from click.testing import CliRunner
-from unittest.mock import MagicMock
 from loadimpactcli import userscenario_commands
+
+try:
+    from unittest.mock import MagicMock
+except ImportError:
+    from mock import MagicMock
 
 
 class MockValidation(object):

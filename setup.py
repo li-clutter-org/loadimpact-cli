@@ -35,16 +35,18 @@ setup(
     include_package_data=True,
     data_files=[('', ['config.ini', 'README.md'])],
     install_requires=[
+        'setuptools>=18',
         'click',
         'loadimpact-v3',
         'tzlocal',
         'six',
+        'mock'
     ],
+    test_requires=['coverage'],
     entry_points={
         'console_scripts': [
             'loadimpact=loadimpactcli.loadimpact_cli:run_cli',
         ],
     },
     test_suite='tests',
-    test_requires=['coverage'],
 )
