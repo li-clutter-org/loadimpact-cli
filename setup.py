@@ -27,6 +27,7 @@ setup(
     version=__version__,
     author='Load Impact',
     author_email='support@loadimpact.com',
+    url='http://developers.loadimpact.com/',
     packages=['loadimpactcli'],
     py_modules=['loadimpactcli'],
     include_package_data=True,
