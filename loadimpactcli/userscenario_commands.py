@@ -20,7 +20,7 @@ import click
 from tzlocal import get_localzone
 from six import raise_from
 
-from loadimpact.exceptions import ConnectionError
+from loadimpact3.exceptions import ConnectionError
 
 from .client import client
 from .config import DEFAULT_PROJECT
