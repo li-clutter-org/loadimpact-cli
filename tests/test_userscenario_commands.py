@@ -14,6 +14,10 @@ See the License for the specific language governing permissions and
 limitations under the License.
 """
 
+# Without this the config will prompt for a token
+import os
+os.environ['LOADIMPACT_API_TOKEN'] = 'token'
+
 import unittest
 from collections import namedtuple
 
