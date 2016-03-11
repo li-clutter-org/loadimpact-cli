@@ -4,11 +4,6 @@ Command line interface for Load Impact API version 3.
 
 ## Install
 
-Install using `pip`:
-
-```sh
-pip install loadimpact-cli
-```
 [![PyPI](https://img.shields.io/pypi/v/loadimpact-cli.svg)]() [![PyPI](https://img.shields.io/pypi/dm/loadimpact-cli.svg)]()
 
 Install using setup.py
