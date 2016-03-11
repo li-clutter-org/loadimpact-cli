@@ -19,7 +19,7 @@ python setup.py install
 
 ## Configuration
 
-Before running the loadimpact cli you need to add your Load Impact API token and the default project you wish to work with to the config file.
+Before running the loadimpact cli you need to add your [Load Impact V3 API token](https://app.loadimpact.com/account/api-token)(located at the user profile settings) and the default project you wish to work with to the config file.
 
 The config file will be placed:
 
