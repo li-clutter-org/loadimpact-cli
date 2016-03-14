@@ -13,7 +13,17 @@ pip install loadimpact-cli
 
 Install using setup.py
 
+For MacOSX:
+
 ```
+sudo pip install -r requirements.txt
+sudo python setup.py install
+```
+
+For Linux:
+
+```
+pip install -r requirements.txt
 python setup.py install
 ```
 
