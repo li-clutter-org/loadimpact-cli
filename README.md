@@ -84,7 +84,7 @@ $ loadimpact organization projects 1
 
 ## Working with User Scenarios
 
-A User Scenario is a object that contains a script that defines your user behavior. This script should be written in Lua.
+A [User Scenario](http://support.loadimpact.com/knowledgebase/articles/174287-what-is-a-user-scenario) is a object that contains a script that defines your user behavior. This script should be written in Lua.
 
 ### Listing the User scenarios in a project.
 
@@ -104,3 +104,14 @@ $ loadimpact user-scenario list --project_id=1
 
 Listing the user-scenarios prints the scripts of the user-scenarios of the specified projects. 
 
+### Creating a new User Scenario
+
+In order to create a new User Scenario you need to have specified the project you want the User scenario to belong to in some of the ways mentioned under "Listing the User scenarios in a project." 
+
+You also need to specify the path to the script file you want to create the User scenario with. 
+
+
+```
+$ loadimpact user-scenario create /path/to/script.lua --project_id=1
+
+```
