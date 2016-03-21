@@ -1,0 +1,3 @@
+include config.ini README.md
+recursive-include loadimpactcli *
+global-exclude __pycache__ *.pyc

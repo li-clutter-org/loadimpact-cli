@@ -1,15 +1,10 @@
 # Load Impact CLI [![Build Status](https://travis-ci.org/loadimpact/loadimpact-cli.png?branch=master,develop)](https://travis-ci.org/loadimpact/loadimpact-cli) [![Coverage Status](https://coveralls.io/repos/loadimpact/loadimpact-cli/badge.svg?branch=develop&service=github)](https://coveralls.io/github/loadimpact/loadimpact-cli?branch=develop)
 
-Command line interface for Load Impact API version 3.
+Command line interface for Load Impact API version 3. This CLI is still in BETA so we are still hunting bugs, adding features and changing things rapidly. 
 
 ## Install
 
-Install using `pip`:
-
-```sh
-pip install loadimpact-cli
-```
-[![PyPI](https://img.shields.io/pypi/v/loadimpact-cli.svg)]() [![PyPI](https://img.shields.io/pypi/dm/loadimpact-cli.svg)]()
+[![PyPI](https://img.shields.io/pypi/v/loadimpact-cli.svg)](https://pypi.python.org/pypi/loadimpact-cli) [![PyPI](https://img.shields.io/pypi/dm/loadimpact-cli.svg)](https://pypi.python.org/pypi/loadimpact-cli)
 
 Install using setup.py
 
@@ -19,7 +14,7 @@ python setup.py install
 
 ## Configuration
 
-Before running the loadimpact cli you need to add your Load Impact API token and the default project you wish to work with to the config file.
+Before running the CLI you need to add your [Load Impact V3 API token](https://app.loadimpact.com/account/api-token) to the config file. You can generate a Load Impact V3 API token in the user profile settings.
 
 The config file will be placed:
 
@@ -81,8 +76,31 @@ $ loadimpact organization list
 
 ### Listing the projects of an organization
 
-Listing the projects of an organization with id 1. This will help you find the project you want to use as default project
+Listing the projects of an organization with id 1. This will help you find the project you want to use as default project. 
 
 ```
 $ loadimpact organization projects 1
 ```
+
+## Working with User Scenarios
+
+A User Scenario is a object that contains a script that defines your user behavior. This script should be written in Lua.
+
+### Listing the User scenarios in a project.
+
+In order to list the User scenarios in a project you need to specify a project id. Either you add this to the config or export them as an environment variable as mentioned above.
+
+```
+$ loadimpact user-scenario list
+
+```
+
+Or you can add it using the project_id-flag. 
+
+```
+$ loadimpact user-scenario list --project_id=1
+
+```
+
+Listing the user-scenarios prints the scripts of the user-scenarios of the specified projects. 
+
