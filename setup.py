@@ -33,7 +33,7 @@ setup(
     license='LICENSE.txt',
     description="The Load Impact CLI interfaces with Load Impact's cloud-based performance testing platform",
     include_package_data=True,
-    data_files=[('', ['config.ini', 'README.md'])],
+    data_files=[('', ['README.md'])],
     install_requires=[
         'setuptools>=18',
         'click',
