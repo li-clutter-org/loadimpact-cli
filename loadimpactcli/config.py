@@ -57,7 +57,7 @@ def get_or_create_config_file_path(config_file_path):
                 pass
             else:
                 raise_from(CLIError("Unable to create directory {0}".format(path)), ex)
-        with open(config_file_path, 'wb') as configfile:
+        with open(config_file_path, 'w') as configfile:
             new_config.write(configfile)
 
 
