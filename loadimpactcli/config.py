@@ -19,7 +19,6 @@ from six import raise_from
 import errno
 import os
 from sys import platform
-from shutil import copyfile
 import click
 
 from .errors import CLIError
@@ -27,7 +26,6 @@ from .errors import CLIError
 config = configparser.ConfigParser()
 home = os.path.expanduser("~")
 config_file_path = ''
-current_working_directory = os.getcwd()
 
 # MacOSX
 if platform == "darwin":
@@ -38,11 +36,18 @@ if platform == "linux" or platform == "linux2":
     config_file_path = '{0}/.config/LoadImpact/config.ini'.format(home)
 
 
+def build_config():
+    new_config = configparser.RawConfigParser()
+    new_config.add_section('user_settings')
+    return new_config
+
+
 def get_or_create_config_file_path(config_file_path):
     """Check if a config file exists globally, otherwise create it."""
     if not os.path.isfile(config_file_path):
         print("Creating config file in {0}".format(config_file_path))
-        project_config_file_path = "{0}/{1}".format(current_working_directory, 'config.ini')
+
+        new_config = build_config()
 
         path = os.path.dirname(config_file_path)
         try:
@@ -52,7 +57,8 @@ def get_or_create_config_file_path(config_file_path):
                 pass
             else:
                 raise_from(CLIError("Unable to create directory {0}".format(path)), ex)
-        copyfile(project_config_file_path, config_file_path)
+        with open(config_file_path, 'wb') as configfile:
+            new_config.write(configfile)
 
 
 def get_required_value_from_usersettings(key, env_name):
@@ -62,7 +68,7 @@ def get_required_value_from_usersettings(key, env_name):
     try:
         return config.get('user_settings', key)
     except configparser.Error:
-        value = click.prompt('{0}: '.format(env_name))
+        value = click.prompt('{0}'.format(env_name))
         print("Adding key and value to config at {0}".format(config_file_path))
         with open(config_file_path, 'a') as file:
             file.write('\n{0}={1}'.format(key, value))
