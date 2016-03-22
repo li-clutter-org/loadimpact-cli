@@ -6,10 +6,17 @@ Command line interface for Load Impact API version 3. This CLI is still in BETA 
 
 [![PyPI](https://img.shields.io/pypi/v/loadimpact-cli.svg)](https://pypi.python.org/pypi/loadimpact-cli) [![PyPI](https://img.shields.io/pypi/dm/loadimpact-cli.svg)](https://pypi.python.org/pypi/loadimpact-cli)
 
-Install using setup.py
+### Install using setup.py
 
 ```
+cd loadimpact-cli
 python setup.py install
+```
+
+### Install using pip
+
+```
+pip install loadimpact-cli
 ```
 
 ## Configuration
@@ -82,7 +89,7 @@ Listing the projects of an organization with id 1. This will help you find the p
 $ loadimpact organization projects 1
 ```
 
-## Working with User Scenarios
+## Working with User Scenarios scripts
 
 A [User Scenario](http://support.loadimpact.com/knowledgebase/articles/174287-what-is-a-user-scenario) is a object that contains a script that defines your user behavior. This script should be written in Lua.
 
@@ -112,6 +119,57 @@ You also need to specify the path to the script file you want to create the User
 
 
 ```
-$ loadimpact user-scenario create /path/to/script.lua --project_id=1
+$ loadimpact user-scenario create 'script name' /path/to/script.lua --project_id=1
 
 ```
+### Getting a User Scenario.
+
+To get a User scenario script you'll need the id of that user scenario. 
+
+```
+$ loadimpact user-scenario get 1
+
+```
+### Updating a User Scenario
+
+To update the script of a User scenario you need to specify the id of the scenario you wan't to update and the script you want to upload for it. 
+
+```
+$ loadimpact user-scenario update 1 /path/to/script.lua
+
+```
+
+### Validating a User Scenario
+
+In order to be able to use a script it has to be valid, you can check if a script is valid by using the command validate. This will validate your script row by row. Please note that this command can takes some time to finish as we actually fire the script up and send some requests. 
+
+```
+$ loadimpact user-scenario validate 1
+
+```
+
+### Deleting a User Scenario
+
+You can delete a User Scenario with the delete command. This will delete the entire User Scenario, not just remove the script. Since this is a destructive action you'll need to verify it. 
+
+```
+$ loadimpact user-scenario delete 1
+
+```
+If you need to bypass the verifying you can add the ```--yes``` flag. 
+
+```
+$ loadimpact user-scenario delete 1 --yes
+
+```
+
+## Contribute!
+
+If you wan't to contribute, please check out the repository and install the dependencys in a virtualenv using pip. The tests can be run with ```setup.py```
+
+```
+$ python setup.py test
+
+```
+
+If you've found a bug or something isn't working properly, please don't hesitate to create a ticket for us! 
