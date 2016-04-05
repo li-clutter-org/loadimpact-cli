@@ -35,6 +35,10 @@ if platform == "darwin":
 if platform == "linux" or platform == "linux2":
     config_file_path = '{0}/.config/LoadImpact/config.ini'.format(home)
 
+# Windows
+if platform == "win32":
+    config_file_path = '{0}\AppData\LoadImpact\config.ini'.format(home)
+
 
 def build_config():
     new_config = configparser.RawConfigParser()
