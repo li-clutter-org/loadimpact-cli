@@ -72,6 +72,7 @@ Options:
 Commands:
   organization
   user-scenario
+  data-store
 ```
 
 ### Listing organizations
@@ -161,6 +162,33 @@ If you need to bypass the verifying you can add the ```--yes``` flag.
 ```
 $ loadimpact user-scenario delete 1 --yes
 
+```
+
+## Working with Data stores
+
+A Data store contains a .csv-file where you define values you want to use in your test. A Data store can be reused in many tests, making test-setups easier. For example a Data store .csv-file can contain [URL:s](http://support.loadimpact.com/knowledgebase/articles/174987-random-url-from-a-data-store) for a test. 
+
+### Downloading a Data store
+
+The ```data-store download``` command will download the .csv-file of the specified Data store. If the ```--file_name```-flag is omitted the file will be saved in the current directory as DATA-STORE-ID.csv
+
+```
+$ loadimpact data-store download 1 --file_name /path/where/you/want/file.csv
+
+```
+
+### Creating a Data store
+The ```data-store create``` command will create a new Data store containing the file specified.
+
+```
+$ loadimpact data-store create /path/to/file.csv 'Your Data store name'
+```
+
+### Updating a Data store
+The ```data-store update``` command will update the file of the specified Data store.
+
+```
+$ loadimpact data-store update 1 /path/to/file.csv
 ```
 
 ## Contribute!

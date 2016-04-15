@@ -43,7 +43,6 @@ class TestDataStores(unittest.TestCase):
         datastore_commands._download_csv = MagicMock()
         client.get_data_store = MagicMock(return_value=self.datastore1)
         result = self.runner.invoke(datastore_commands.download_csv, ['1'])
-        print(result)
         assert result.exit_code == 0
         assert result.output == "Downloading CSV file, please wait.\nFinished download.\n"
 
@@ -71,7 +70,7 @@ class TestDataStores(unittest.TestCase):
                                                                           '--project_id',
                                                                           '1'])
         assert result.exit_code == 0
-        assert result.output == "{0}\n{1}\n".format("Data store conversion completed with status 'unknown'", self.datastore1)
+        assert result.output == "{0}\n".format("Data store conversion completed with status 'unknown'")
 
     def test_update_datastore(self):
         client = datastore_commands.client
@@ -88,4 +87,4 @@ class TestDataStores(unittest.TestCase):
                                                                           '--project_id',
                                                                           '1'])
         assert result.exit_code == 0
-        assert result.output == "{0}\n{1}\n".format("Data store conversion completed with status 'unknown'", self.datastore2)
+        assert result.output == "{0}\n".format("Data store conversion completed with status 'unknown'")

@@ -90,7 +90,6 @@ def create_datastore(datastore_file, name, project_id, delimiter, separator, fro
         click.echo("Data store conversion completed with status '{0}'".format(
                    (DataStore.status_code_to_text(data_store.status))))
 
-        click.echo(data_store)
     except ConnectionError:
         click.echo("Cannot connect to Load impact API")
 
@@ -122,7 +121,6 @@ def update_datastore(id, datastore_file, name, project_id, delimiter, separator,
         click.echo("Data store conversion completed with status '{0}'".format(
                   (DataStore.status_code_to_text(data_store.status))))
 
-        click.echo(data_store)
     except ConnectionError:
         click.echo("Cannot connect to Load impact API")
 
