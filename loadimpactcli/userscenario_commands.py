@@ -51,7 +51,7 @@ def list_scenarios(project_id):
     try:
         userscenarios = client.list_user_scenarios(project_id)
         for userscenario in userscenarios:
-            click.echo(userscenario.script)
+            click.echo('{0}\t{1}'.format(userscenario.id, userscenario.name))
     except ConnectionError:
         click.echo("Cannot connect to Load impact API")
 
@@ -116,7 +116,7 @@ def delete_user_scenario(scenario_id):
 
 def update_user_scenario_script(scenario_id, script):
     userscenario = client.get_user_scenario(scenario_id)
-    userscenario.update({'script': script})
+    userscenario.update_scenario({'script': script})
     return client.get_user_scenario(scenario_id)
 
 
