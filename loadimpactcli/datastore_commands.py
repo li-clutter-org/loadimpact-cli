@@ -18,7 +18,6 @@ limitations under the License.
 import click
 import requests
 import shutil
-from six import raise_from
 from time import sleep
 
 from loadimpact3.exceptions import ConnectionError
@@ -26,7 +25,6 @@ from loadimpact3 import DataStore
 
 from .client import client
 from .config import DEFAULT_PROJECT
-from .errors import CLIError
 
 
 @click.group(name='data-store')
@@ -39,8 +37,8 @@ def data_store(ctx):
 @click.option('--project_id', default=DEFAULT_PROJECT, envvar='DEFAULT_PROJECT', help='Id of the project to list data stores from.')
 def list_datastore(project_id):
 
-    if project_id is None:
-        raise_from(CLIError('You need to provide a project id.'), None)
+    if not project_id:
+        return click.echo('You need to provide a project id.')
 
     try:
         data_stores = client.list_data_stores(project_id)
@@ -73,8 +71,8 @@ def download_csv(datastore_id, file_name):
 @click.option('--project_id', default=DEFAULT_PROJECT, envvar='DEFAULT_PROJECT', help='Id of the project to create the data store in.')
 def create_datastore(datastore_file, name, project_id, delimiter, separator, fromline):
 
-    if project_id is None:
-        raise_from(CLIError('You need to provide a project id.'), None)
+    if not project_id:
+        return click.echo('You need to provide a project id.')
     try:
         file_obj = datastore_file
         data_store_json = {
@@ -103,8 +101,8 @@ def create_datastore(datastore_file, name, project_id, delimiter, separator, fro
 @click.option('--fromline', default=1, help='CSV file read from line')
 @click.option('--project_id', default=DEFAULT_PROJECT, envvar='DEFAULT_PROJECT', help='Project id of the data store')
 def update_datastore(id, datastore_file, name, project_id, delimiter, separator, fromline):
-    if project_id is None:
-        raise_from(CLIError('You need to provide a project id.'), None)
+    if not project_id:
+        return click.echo('You need to provide a project id.')
     try:
         data_store = client.get_data_store(id)
         file_obj = datastore_file

@@ -59,6 +59,13 @@ class TestDataStores(unittest.TestCase):
         assert result.exit_code == 0
         assert result.output == "1\tFirst datastore\n2\tSecond datastore\n"
 
+    def test_list_datastore_missing_project_id(self):
+        client = datastore_commands.client
+        client.list_data_stores = MagicMock(return_value=[self.datastore1, self.datastore2])
+        result = self.runner.invoke(datastore_commands.list_datastore, [])
+        assert result.exit_code == 0
+        assert result.output == "You need to provide a project id.\n"
+
     def test_create_datastore(self):
         client = datastore_commands.client
         client.DEFAULT_PROJECT = 1
@@ -71,6 +78,15 @@ class TestDataStores(unittest.TestCase):
                                                                           '1'])
         assert result.exit_code == 0
         assert result.output == "{0}\n".format("Data store conversion completed with status 'unknown'")
+
+    def test_create_datastore_missing_params(self):
+        client = datastore_commands.client
+        client.DEFAULT_PROJECT = 1
+
+        client.create_data_store = MagicMock(return_value=self.datastore1)
+        datastore_commands._wait_for_conversion = MagicMock(return_value=self.datastore1)
+        result = self.runner.invoke(datastore_commands.create_datastore, ['tests/script'])
+        assert result.exit_code == 2
 
     def test_update_datastore(self):
         client = datastore_commands.client
@@ -88,3 +104,14 @@ class TestDataStores(unittest.TestCase):
                                                                           '1'])
         assert result.exit_code == 0
         assert result.output == "{0}\n".format("Data store conversion completed with status 'unknown'")
+
+    def test_update_datastore_missing_params(self):
+        client = datastore_commands.client
+        client.DEFAULT_PROJECT = 1
+
+        client.get_data_store = MagicMock(return_value=self.datastore2)
+        client.update_data_store = MagicMock(return_value=self.datastore2)
+        datastore_commands._wait_for_conversion = MagicMock(return_value=self.datastore2)
+
+        result = self.runner.invoke(datastore_commands.update_datastore, ['1'])
+        assert result.exit_code == 2
