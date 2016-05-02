@@ -125,7 +125,6 @@ def update_datastore(id, datastore_file, name, project_id, delimiter, separator,
 
 def _wait_for_conversion(data_store):
     while not data_store.has_conversion_finished():
-        data_store = client.get_data_store(data_store.id)
         sleep(3)
     return data_store
 
