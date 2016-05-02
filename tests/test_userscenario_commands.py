@@ -47,9 +47,9 @@ class TestUserScenarios(unittest.TestCase):
 
     def setUp(self):
         self.runner = CliRunner()
-        Scenario = namedtuple('Scenario', ['script'])
-        self.scenario1 = Scenario('debug')
-        self.scenario2 = Scenario('info')
+        Scenario = namedtuple('Scenario', ['id', 'name', 'script'])
+        self.scenario1 = Scenario(1, 'Scen1', 'debug')
+        self.scenario2 = Scenario(2, 'Scen2', 'info')
 
     def test_get_scenario(self):
         client = userscenario_commands.client
@@ -70,7 +70,7 @@ class TestUserScenarios(unittest.TestCase):
         result = self.runner.invoke(userscenario_commands.list_scenarios, ['--project_id', '1'])
 
         assert result.exit_code == 0
-        assert result.output == "debug\ninfo\n"
+        assert result.output == "1\tScen1\n2\tScen2\n"
 
     def test_create_scenario(self):
         client = userscenario_commands.client

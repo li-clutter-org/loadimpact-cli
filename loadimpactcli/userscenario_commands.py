@@ -18,13 +18,11 @@ limitations under the License.
 from time import sleep
 import click
 from tzlocal import get_localzone
-from six import raise_from
 
 from loadimpact3.exceptions import ConnectionError
 
 from .client import client
 from .config import DEFAULT_PROJECT
-from .errors import CLIError
 
 
 @click.group(name='user-scenario')
@@ -46,12 +44,12 @@ def get_scenario(id):
 @userscenario.command('list', short_help='List user-scenarios.')
 @click.option('--project_id', default=DEFAULT_PROJECT, envvar='DEFAULT_PROJECT', help='Id of the project to list scenarios from.')
 def list_scenarios(project_id):
-    if project_id is None:
-        raise_from(CLIError('You need to provide a project id.'), None)
+    if not project_id:
+        return click.echo('You need to provide a project id.')
     try:
         userscenarios = client.list_user_scenarios(project_id)
         for userscenario in userscenarios:
-            click.echo(userscenario.script)
+            click.echo('{0}\t{1}'.format(userscenario.id, userscenario.name))
     except ConnectionError:
         click.echo("Cannot connect to Load impact API")
 
@@ -62,7 +60,7 @@ def list_scenarios(project_id):
 @click.option('--project_id', default=DEFAULT_PROJECT, envvar='DEFAULT_PROJECT', help='Id of the project the scenario should be in.')
 def create_scenario(script_file, name, project_id):
     if not project_id:
-        raise CLIError('You need to provide a project id.')
+        return click.echo('You need to provide a project id.')
     script = read_file(script_file)
     data = {
         u"name": name,
@@ -116,7 +114,7 @@ def delete_user_scenario(scenario_id):
 
 def update_user_scenario_script(scenario_id, script):
     userscenario = client.get_user_scenario(scenario_id)
-    userscenario.update({'script': script})
+    userscenario.update_scenario({'script': script})
     return client.get_user_scenario(scenario_id)
 
 
