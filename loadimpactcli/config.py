@@ -35,6 +35,10 @@ if platform == "darwin":
 if platform == "linux" or platform == "linux2":
     config_file_path = '{0}/.config/LoadImpact/config.ini'.format(home)
 
+# Windows
+if platform == "win32":
+    config_file_path = '{0}\AppData\LoadImpact\config.ini'.format(home)
+
 
 def build_config():
     new_config = configparser.RawConfigParser()
@@ -57,7 +61,7 @@ def get_or_create_config_file_path(config_file_path):
                 pass
             else:
                 raise_from(CLIError("Unable to create directory {0}".format(path)), ex)
-        with open(config_file_path, 'wb') as configfile:
+        with open(config_file_path, 'w') as configfile:
             new_config.write(configfile)
 
 

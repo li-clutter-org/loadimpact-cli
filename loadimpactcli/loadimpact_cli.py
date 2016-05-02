@@ -19,6 +19,7 @@ import click
 
 from .userscenario_commands import userscenario
 from .organization_commands import organization
+from .datastore_commands import data_store
 
 
 @click.group()
@@ -30,6 +31,7 @@ def cli(ctx):
 def run_cli():
     cli.add_command(userscenario)
     cli.add_command(organization)
+    cli.add_command(data_store)
     cli()
 
 if __name__ == '__main__':
