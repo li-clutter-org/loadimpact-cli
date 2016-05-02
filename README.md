@@ -37,6 +37,12 @@ For Linux:
 ~/.config/LoadImpact/config.ini
 ```
 
+For Windows:
+
+```
+\AppData\LoadImpact\config.ini
+```
+
 The config file should look like this:
 
 ```
