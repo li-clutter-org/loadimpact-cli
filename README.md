@@ -28,7 +28,7 @@ The config file will be placed:
 For MacOSX:
 
 ```
-/Library/Application Support/LoadImpact/config.ini
+/Users/<YOUR_USER_NAME>/Library/Application Support/LoadImpact/config.ini
 ```
 
 For Linux:
