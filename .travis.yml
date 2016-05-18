@@ -7,6 +7,7 @@ python:
 install:
   - python setup.py -q install
   - pip install -r requirements.txt
+  - pip install -r requirements_dev.txt
   - pip install coverage==3.7.1
   - pip install coveralls
 script:
