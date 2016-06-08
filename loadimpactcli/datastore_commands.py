@@ -42,8 +42,9 @@ def list_datastore(project_id):
 
     try:
         data_stores = client.list_data_stores(project_id)
+        click.echo("ID:\tNAME:")
         for data_store in data_stores:
-            click.echo("{0}\t{1}".format(data_store.id, data_store.name))
+            click.echo(u"{0}\t{1}".format(data_store.id, data_store.name))
     except ConnectionError:
         click.echo("Cannot connect to Load impact API")
 

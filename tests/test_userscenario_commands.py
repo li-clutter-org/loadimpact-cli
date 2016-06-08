@@ -1,3 +1,4 @@
+# coding=utf-8
 """
 Copyright 2016 Load Impact
 
@@ -48,8 +49,9 @@ class TestUserScenarios(unittest.TestCase):
     def setUp(self):
         self.runner = CliRunner()
         Scenario = namedtuple('Scenario', ['id', 'name', 'script'])
-        self.scenario1 = Scenario(1, 'Scen1', 'debug')
-        self.scenario2 = Scenario(2, 'Scen2', 'info')
+        self.scenario1 = Scenario(1, u'Scen1', 'debug')
+        self.scenario2 = Scenario(2, u'Scen2', 'info')
+        self.scenario3 = Scenario(3, u'Scen3 åäö', 'info')
 
     def test_get_scenario(self):
         client = userscenario_commands.client
@@ -70,7 +72,16 @@ class TestUserScenarios(unittest.TestCase):
         result = self.runner.invoke(userscenario_commands.list_scenarios, ['--project_id', '1'])
 
         assert result.exit_code == 0
-        assert result.output == "1\tScen1\n2\tScen2\n"
+        assert result.output == u"ID:\tNAME:\n1\tScen1\n2\tScen2\n"
+
+    def test_list_scenario_non_ascii_name(self):
+        client = userscenario_commands.client
+        client.DEFAULT_PROJECT = 1
+        client.list_user_scenarios = MagicMock(return_value=[self.scenario1, self.scenario3])
+        result = self.runner.invoke(userscenario_commands.list_scenarios, ['--project_id', '1'])
+
+        assert result.exit_code == 0
+        assert result.output == u"ID:\tNAME:\n1\tScen1\n3\tScen3 åäö\n"
 
     def test_create_scenario(self):
         client = userscenario_commands.client
