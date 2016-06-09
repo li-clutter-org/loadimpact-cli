@@ -48,8 +48,9 @@ def list_scenarios(project_id):
         return click.echo('You need to provide a project id.')
     try:
         userscenarios = client.list_user_scenarios(project_id)
+        click.echo("ID:\tNAME:")
         for userscenario in userscenarios:
-            click.echo('{0}\t{1}'.format(userscenario.id, userscenario.name))
+            click.echo(u'{0}\t{1}'.format(userscenario.id, userscenario.name))
     except ConnectionError:
         click.echo("Cannot connect to Load impact API")
 
@@ -141,7 +142,7 @@ def get_formatted_validation_results(validation_results):
         if result.level:
             result_level_formatted = '{0} '.format(result.level)
 
-        return "{0}[{1}] {2}".format(result_level_formatted, result_in_local_time, result.message)
+        return u"{0}[{1}] {2}".format(result_level_formatted, result_in_local_time, result.message)
 
 
 def abort_if_false(ctx, param, value):
