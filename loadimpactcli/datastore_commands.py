@@ -75,7 +75,6 @@ def create_datastore(datastore_file, name, project_id, delimiter, separator, fro
     if not project_id:
         return click.echo('You need to provide a project id.')
     try:
-        file_obj = datastore_file
         data_store_json = {
             'name': name,
             'project_id': project_id,
@@ -83,7 +82,7 @@ def create_datastore(datastore_file, name, project_id, delimiter, separator, fro
             'separator': separator,
             'fromline': fromline,
         }
-        data_store = client.create_data_store(data_store_json, file_obj)
+        data_store = client.create_data_store(data_store_json, datastore_file)
         data_store = _wait_for_conversion(data_store)
 
         click.echo("Data store conversion completed with status '{0}'".format(
