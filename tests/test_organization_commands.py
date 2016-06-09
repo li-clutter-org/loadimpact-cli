@@ -16,7 +16,7 @@ limitations under the License.
 
 # Without this the config will prompt for a token
 import os
-os.environ['LOADIMPACT_API_TOKEN'] = 'token'
+os.environ['LOADIMPACT_API_V3_TOKEN'] = 'token'
 
 import unittest
 from collections import namedtuple
