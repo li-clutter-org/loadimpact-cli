@@ -64,8 +64,8 @@ def download_csv(datastore_id, file_name):
 
 
 @data_store.command('create', short_help='Create datastore.')
-@click.argument('datastore_file', type=click.File('r'))
 @click.argument('name')
+@click.argument('datastore_file', type=click.File('r'))
 @click.option('--delimiter', default='double', help='CSV file delimiter.')
 @click.option('--separator', default='comma', help='CSV file separator.')
 @click.option('--fromline', default=1, help='CSV file read from line')

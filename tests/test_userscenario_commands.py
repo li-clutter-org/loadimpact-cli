@@ -127,3 +127,12 @@ class TestUserScenarios(unittest.TestCase):
     def test_validate_scenario_no_params(self):
         result = self.runner.invoke(userscenario_commands.delete_scenario, [])
         assert result.exit_code == 2
+
+    def test_get_formatted_validation_results(self):
+
+        MockValidationResult.level = None
+        userscenario_commands.get_timestamp_as_local_time = MagicMock(return_value=2)
+
+        unformatted_validations = [MockValidationResult(2, 'msg 1'), MockValidationResult(2, 'msg 2'), MockValidationResult(2, 'msg 3')]
+        formatted_validations = userscenario_commands.get_formatted_validation_results(unformatted_validations)
+        assert formatted_validations == "[2] msg 1\n[2] msg 2\n[2] msg 3\n"

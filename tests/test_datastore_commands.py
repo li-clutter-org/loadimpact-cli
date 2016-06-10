@@ -83,8 +83,8 @@ class TestDataStores(unittest.TestCase):
 
         client.create_data_store = MagicMock(return_value=self.datastore1)
         datastore_commands._wait_for_conversion = MagicMock(return_value=self.datastore1)
-        result = self.runner.invoke(datastore_commands.create_datastore, ['tests/script',
-                                                                          'NewDatastore',
+        result = self.runner.invoke(datastore_commands.create_datastore, ['NewDatastore',
+                                                                          'tests/script',
                                                                           '--project_id',
                                                                           '1'])
         assert result.exit_code == 0

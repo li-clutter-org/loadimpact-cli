@@ -136,13 +136,18 @@ def get_validation_results(validation):
 
 
 def get_formatted_validation_results(validation_results):
+    formatted_validations = ''
     for result in validation_results:
-        result_in_local_time = result.timestamp.astimezone(get_localzone())
+        result_in_local_time = get_timestamp_as_local_time(result.timestamp)
         result_level_formatted = ''
         if result.level:
             result_level_formatted = '{0} '.format(result.level)
+        formatted_validations += u"{0}[{1}] {2}\n".format(result_level_formatted, result_in_local_time, result.message)
+    return formatted_validations
 
-        return u"{0}[{1}] {2}".format(result_level_formatted, result_in_local_time, result.message)
+
+def get_timestamp_as_local_time(timestamp):
+    return timestamp.astimezone(get_localzone())
 
 
 def abort_if_false(ctx, param, value):
