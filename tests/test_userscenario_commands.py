@@ -105,6 +105,17 @@ class TestUserScenarios(unittest.TestCase):
         assert result.exit_code == 0
         assert result.output == "debug\n"
 
+    def test_create_scenario_with_existing_datastore(self):
+        client = userscenario_commands.client
+        client.create_user_scenario = MagicMock(return_value=self.scenario1)
+        result = self.runner.invoke(userscenario_commands.create_scenario,
+                                    ['tests/script', 'my script',
+                                     '--project_id', '1',
+                                     '--datastore_id', '1'
+                                     ])
+        assert result.exit_code == 0
+        assert result.output == "debug\n"
+
     def test_update_scenario(self):
         userscenario_commands.update_user_scenario_script = MagicMock(return_value=self.scenario1)
         result = self.runner.invoke(userscenario_commands.update_scenario, ['1', 'tests/script'])
