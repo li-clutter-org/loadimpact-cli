@@ -60,7 +60,8 @@ def list_scenarios(project_id):
 @click.argument('name')
 @click.option('--project_id', default=DEFAULT_PROJECT, envvar='DEFAULT_PROJECT', help='Id of the project the scenario should be in.')
 @click.option('--datastore_file', type=click.File('r'), multiple=True, help='A CSV file to be used as a new data store for the user scenario. The name of the file is used as a name for the data store. Multiple files can be provided by repeating the option.')
-def create_scenario(script_file, name, project_id, datastore_file):
+@click.option('--datastore_id', type=int, multiple=True, help='The ID of an existing datas tore to be linked to the user scenario. Multiple IDs can be provided by repeating the option.')
+def create_scenario(script_file, name, project_id, datastore_file, datastore_id):
     if not project_id:
         return click.echo('You need to provide a project id.')
     script = read_file(script_file)
@@ -69,9 +70,9 @@ def create_scenario(script_file, name, project_id, datastore_file):
         u"script": script,
         u"project_id": project_id
     }
+    data_store_ids = []
 
     if datastore_file:
-        data_store_ids = []
         for data_store_file in datastore_file:
             data_store_json = {
                 'name': data_store_file.name,
@@ -85,6 +86,10 @@ def create_scenario(script_file, name, project_id, datastore_file):
             except ConnectionError:
                 click.echo("Cannot connect to Load impact API")
             data_store_ids.append(data_store.id)
+
+    data_store_ids += datastore_id
+
+    if data_store_ids:
         data[u"data_store_ids"] = data_store_ids
 
     try:
