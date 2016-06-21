@@ -147,7 +147,20 @@ class TestUserScenarios(unittest.TestCase):
         assert result.exit_code == 0
 
     def test_validate_scenario_no_params(self):
-        result = self.runner.invoke(userscenario_commands.delete_scenario, [])
+        result = self.runner.invoke(userscenario_commands.validate_scenario, [])
+        assert result.exit_code == 2
+
+    def test_validate_script(self):
+
+        userscenario_commands.client.create_user_scenario_script_validation = MagicMock(return_value=MockValidation('Success'))
+        userscenario_commands.get_validation_results = MagicMock(return_value=[MockValidationResult(2, 'msg')])
+        userscenario_commands.get_formatted_validation_results = MagicMock(return_value='Validation 1')
+
+        result = self.runner.invoke(userscenario_commands.validate_script, ['tests/script', '--project_id', '1'])
+        assert result.exit_code == 0
+
+    def test_validate_script_no_params(self):
+        result = self.runner.invoke(userscenario_commands.validate_script, [])
         assert result.exit_code == 2
 
     def test_get_formatted_validation_results(self):

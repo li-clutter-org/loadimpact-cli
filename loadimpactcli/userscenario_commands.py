@@ -132,6 +132,25 @@ def validate_scenario(scenario_id):
         click.echo("Cannot connect to Load impact API")
 
 
+@userscenario.command('validate-script', short_help='Validate script without user scenario.')
+@click.argument('script_file', type=click.File('r'))
+@click.option('--project_id', default=DEFAULT_PROJECT, envvar='DEFAULT_PROJECT', help='Id of the project the scenario should be in.')
+def validate_script(project_id, script_file):
+    if not project_id:
+        return click.echo('You need to provide a project id.')
+    try:
+        script = read_file(script_file)
+        data = {
+            u"script": script,
+            u"project_id": project_id
+        }
+        validation = client.create_user_scenario_script_validation(data)
+        validation_results = get_validation_results(validation)
+        click.echo(get_formatted_validation_results(validation_results))
+    except ConnectionError:
+        click.echo("Cannot connect to Load impact API")
+
+
 def delete_user_scenario(scenario_id):
     userscenario = client.get_user_scenario(scenario_id)
     return userscenario.delete()
