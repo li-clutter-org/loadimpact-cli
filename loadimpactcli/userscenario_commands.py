@@ -59,8 +59,8 @@ def list_scenarios(project_id):
 @click.argument('script_file', type=click.File('r'))
 @click.argument('name')
 @click.option('--project_id', default=DEFAULT_PROJECT, envvar='DEFAULT_PROJECT', help='Id of the project the scenario should be in.')
-@click.option('--datastore_file', type=click.File('r'), multiple=True, help='A CSV file to be used as a new data store for the user scenario. The name of the file is used as a name for the data store. Multiple files can be provided by repeating the option.')
-@click.option('--datastore_id', type=int, multiple=True, help='The ID of an existing datas tore to be linked to the user scenario. Multiple IDs can be provided by repeating the option.')
+@click.option('--datastore_file', type=click.File('r'), multiple=True, help='A CSV file to be used as a new data store for the user scenario. The file is read from line 1 expecting comma (,) as a separator and double quotes (") as a delimiter and the name of the file is used as a name for the data store. Multiple files can be provided by repeating the option.')
+@click.option('--datastore_id', type=int, multiple=True, help='The ID of an existing data store to be linked to the user scenario. Multiple IDs can be provided by repeating the option.')
 def create_scenario(script_file, name, project_id, datastore_file, datastore_id):
     if not project_id:
         return click.echo('You need to provide a project id.')
