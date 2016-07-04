@@ -74,6 +74,7 @@ Usage: loadimpact [OPTIONS] COMMAND [ARGS]...
 
 Options:
   --help  Show this message and exit.
+  --version  Show the version and exit.
 
 Commands:
   organization
@@ -81,14 +82,14 @@ Commands:
   data-store
 ```
 
-### Listing organizations
+#### Listing organizations
 
 ```
 $ loadimpact organization list
 ```
 
 
-### Listing the projects of an organization
+#### Listing the projects of an organization
 
 Listing the projects of an organization with id 1. This will help you find the project you want to use as default project. 
 
@@ -100,7 +101,7 @@ $ loadimpact organization projects 1
 
 A [User Scenario](http://support.loadimpact.com/knowledgebase/articles/174287-what-is-a-user-scenario) is a object that contains a script that defines your user behavior. This script should be written in Lua.
 
-### Listing the User scenarios in a project.
+#### Listing the User scenarios in a project.
 
 In order to list the User scenarios in a project you need to specify a project id. Either you add this to the config or export them as an environment variable as mentioned above.
 
@@ -118,7 +119,7 @@ $ loadimpact user-scenario list --project_id=1
 
 Listing the user-scenarios prints the scripts of the user-scenarios of the specified projects. 
 
-### Creating a new User Scenario
+#### Creating a new User Scenario
 
 In order to create a new User Scenario you need to have specified the project you want the User scenario to belong to in some of the ways mentioned under "Listing the User scenarios in a project." 
 
@@ -128,8 +129,29 @@ You also need to specify the path to the script file you want to create the User
 ```
 $ loadimpact user-scenario create 'script name' /path/to/script.lua --project_id=1
 
+
 ```
-### Getting a User Scenario.
+
+You can also add a Data store to your user-scenario, either by using the id of an existing one:
+
+```
+$ loadimpact data-store list
+ID: NAME:
+43  Load Impact Basic
+23  Fake Customers
+$ loadimpact user-scenario create 'script name' /path/to/script.lua --project_id=1 --datastore_id=43
+
+
+```
+
+Or you can add a new Data store file using ```--datastore_file```,  this will create a new Data store in the project and add it to the User scenario. 
+
+```
+$ loadimpact user-scenario create 'script name' /path/to/script.lua --project_id=1 --datastore_file=/path/to/datastore.csv
+
+```
+
+#### Getting a User Scenario.
 
 To get a User scenario script you'll need the id of that user scenario. 
 
@@ -137,7 +159,7 @@ To get a User scenario script you'll need the id of that user scenario.
 $ loadimpact user-scenario get 1
 
 ```
-### Updating a User Scenario
+#### Updating a User Scenario
 
 To update the script of a User scenario you need to specify the id of the scenario you wan't to update and the script you want to upload for it. 
 
@@ -146,7 +168,7 @@ $ loadimpact user-scenario update 1 /path/to/script.lua
 
 ```
 
-### Validating a User Scenario
+#### Validating a User Scenario
 
 In order to be able to use a script it has to be valid, you can check if a script is valid by using the command validate. This will validate your script row by row. Please note that this command can takes some time to finish as we actually fire the script up and send some requests. 
 
@@ -155,7 +177,7 @@ $ loadimpact user-scenario validate 1
 
 ```
 
-### Deleting a User Scenario
+#### Deleting a User Scenario
 
 You can delete a User Scenario with the delete command. This will delete the entire User Scenario, not just remove the script. Since this is a destructive action you'll need to verify it. 
 
@@ -174,7 +196,16 @@ $ loadimpact user-scenario delete 1 --yes
 
 A Data store contains a .csv-file where you define values you want to use in your test. A Data store can be reused in many tests, making test-setups easier. For example a Data store .csv-file can contain [URL:s](http://support.loadimpact.com/knowledgebase/articles/174987-random-url-from-a-data-store) for a test. 
 
-### Downloading a Data store
+#### Listing Data stores
+
+The ```data-store list``` command lists the Data stores in the project.
+
+```
+$ loadimpact data-store list
+
+```
+
+#### Downloading a Data store
 
 The ```data-store download``` command will download the .csv-file of the specified Data store. If the ```--file_name```-flag is omitted the file will be saved in the current directory as DATA-STORE-ID.csv
 
@@ -183,14 +214,14 @@ $ loadimpact data-store download 1 --file_name /path/where/you/want/file.csv
 
 ```
 
-### Creating a Data store
+#### Creating a Data store
 The ```data-store create``` command will create a new Data store containing the file specified.
 
 ```
 $ loadimpact data-store create  'Your Data store name' /path/to/file.csv
 ```
 
-### Updating a Data store
+#### Updating a Data store
 The ```data-store update``` command will update the file of the specified Data store.
 
 ```
