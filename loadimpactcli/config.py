@@ -93,4 +93,4 @@ get_or_create_config_file_path(config_file_path)
 config.read(config_file_path)
 
 DEFAULT_PROJECT = get_optional_value_from_usersettings('default_project', 'LOADIMPACT_DEFAULT_PROJECT')
-LOADIMPACT_API_TOKEN = get_required_value_from_usersettings('api_token', 'LOADIMPACT_API_TOKEN')
+LOADIMPACT_API_TOKEN = get_required_value_from_usersettings('api_token', 'LOADIMPACT_API_V3_TOKEN')

@@ -1,5 +1,4 @@
-loadimpact-v3
+loadimpact-v3==0.0.3
 click==6.2
-tzlocal
-six
-mock
+tzlocal==1.2.2
+six==1.10.0

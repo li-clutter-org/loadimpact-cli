@@ -1,3 +1,4 @@
+# coding=utf-8
 """
 Copyright 2016 Load Impact
 
@@ -16,7 +17,7 @@ limitations under the License.
 
 # Without this the config will prompt for a token
 import os
-os.environ['LOADIMPACT_API_TOKEN'] = 'token'
+os.environ['LOADIMPACT_API_V3_TOKEN'] = 'token'
 
 import unittest
 from collections import namedtuple
@@ -35,8 +36,9 @@ class TestDataStores(unittest.TestCase):
     def setUp(self):
         self.runner = CliRunner()
         DataStore = namedtuple('DataStore', ['id', 'name', 'status', 'public_url'])
-        self.datastore1 = DataStore(1, 'First datastore', 'status1', 'www.example.com')
-        self.datastore2 = DataStore(2, 'Second datastore', 'status2', 'www.example.com')
+        self.datastore1 = DataStore(1, u'First datastore', 'status1', 'www.example.com')
+        self.datastore2 = DataStore(2, u'Second datastore', 'status2', 'www.example.com')
+        self.datastore3 = DataStore(3, u'ÅÄÖåäö', 'status3', 'www.example.com')
 
     def test_download_csv(self):
         client = datastore_commands.client
@@ -57,7 +59,16 @@ class TestDataStores(unittest.TestCase):
         result = self.runner.invoke(datastore_commands.list_datastore, ['--project_id', '1'])
 
         assert result.exit_code == 0
-        assert result.output == "1\tFirst datastore\n2\tSecond datastore\n"
+        assert result.output == u"ID:\tNAME:\n1\tFirst datastore\n2\tSecond datastore\n"
+
+    def test_list_datastore_non_ascii_name(self):
+        client = datastore_commands.client
+        client.DEFAULT_PROJECT = 1
+        client.list_data_stores = MagicMock(return_value=[self.datastore1, self.datastore3])
+        result = self.runner.invoke(datastore_commands.list_datastore, ['--project_id', '1'])
+
+        assert result.exit_code == 0
+        assert result.output == u"ID:\tNAME:\n1\tFirst datastore\n3\tÅÄÖåäö\n"
 
     def test_list_datastore_missing_project_id(self):
         client = datastore_commands.client
@@ -72,8 +83,8 @@ class TestDataStores(unittest.TestCase):
 
         client.create_data_store = MagicMock(return_value=self.datastore1)
         datastore_commands._wait_for_conversion = MagicMock(return_value=self.datastore1)
-        result = self.runner.invoke(datastore_commands.create_datastore, ['tests/script',
-                                                                          'NewDatastore',
+        result = self.runner.invoke(datastore_commands.create_datastore, ['NewDatastore',
+                                                                          'tests/script',
                                                                           '--project_id',
                                                                           '1'])
         assert result.exit_code == 0

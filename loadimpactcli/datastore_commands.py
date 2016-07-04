@@ -42,8 +42,9 @@ def list_datastore(project_id):
 
     try:
         data_stores = client.list_data_stores(project_id)
+        click.echo("ID:\tNAME:")
         for data_store in data_stores:
-            click.echo("{0}\t{1}".format(data_store.id, data_store.name))
+            click.echo(u"{0}\t{1}".format(data_store.id, data_store.name))
     except ConnectionError:
         click.echo("Cannot connect to Load impact API")
 
@@ -63,8 +64,8 @@ def download_csv(datastore_id, file_name):
 
 
 @data_store.command('create', short_help='Create datastore.')
-@click.argument('datastore_file', type=click.File('r'))
 @click.argument('name')
+@click.argument('datastore_file', type=click.File('r'))
 @click.option('--delimiter', default='double', help='CSV file delimiter.')
 @click.option('--separator', default='comma', help='CSV file separator.')
 @click.option('--fromline', default=1, help='CSV file read from line')
@@ -74,7 +75,6 @@ def create_datastore(datastore_file, name, project_id, delimiter, separator, fro
     if not project_id:
         return click.echo('You need to provide a project id.')
     try:
-        file_obj = datastore_file
         data_store_json = {
             'name': name,
             'project_id': project_id,
@@ -82,7 +82,7 @@ def create_datastore(datastore_file, name, project_id, delimiter, separator, fro
             'separator': separator,
             'fromline': fromline,
         }
-        data_store = client.create_data_store(data_store_json, file_obj)
+        data_store = client.create_data_store(data_store_json, datastore_file)
         data_store = _wait_for_conversion(data_store)
 
         click.echo("Data store conversion completed with status '{0}'".format(

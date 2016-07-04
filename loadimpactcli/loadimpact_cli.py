@@ -20,10 +20,12 @@ import click
 from .userscenario_commands import userscenario
 from .organization_commands import organization
 from .datastore_commands import data_store
+from .version import __version__
 
 
 @click.group()
 @click.pass_context
+@click.version_option(version=__version__)
 def cli(ctx):
     pass
 

@@ -48,8 +48,9 @@ def list_scenarios(project_id):
         return click.echo('You need to provide a project id.')
     try:
         userscenarios = client.list_user_scenarios(project_id)
+        click.echo("ID:\tNAME:")
         for userscenario in userscenarios:
-            click.echo('{0}\t{1}'.format(userscenario.id, userscenario.name))
+            click.echo(u'{0}\t{1}'.format(userscenario.id, userscenario.name))
     except ConnectionError:
         click.echo("Cannot connect to Load impact API")
 
@@ -58,7 +59,9 @@ def list_scenarios(project_id):
 @click.argument('script_file', type=click.File('r'))
 @click.argument('name')
 @click.option('--project_id', default=DEFAULT_PROJECT, envvar='DEFAULT_PROJECT', help='Id of the project the scenario should be in.')
-def create_scenario(script_file, name, project_id):
+@click.option('--datastore_file', type=click.File('r'), multiple=True, help='A CSV file to be used as a new data store for the user scenario. The file is read from line 1 expecting comma (,) as a separator and double quotes (") as a delimiter and the name of the file is used as a name for the data store. Multiple files can be provided by repeating the option.')
+@click.option('--datastore_id', type=int, multiple=True, help='The ID of an existing data store to be linked to the user scenario. Multiple IDs can be provided by repeating the option.')
+def create_scenario(script_file, name, project_id, datastore_file, datastore_id):
     if not project_id:
         return click.echo('You need to provide a project id.')
     script = read_file(script_file)
@@ -67,6 +70,28 @@ def create_scenario(script_file, name, project_id):
         u"script": script,
         u"project_id": project_id
     }
+    data_store_ids = []
+
+    if datastore_file:
+        for data_store_file in datastore_file:
+            data_store_json = {
+                'name': data_store_file.name,
+                'project_id': project_id,
+                'delimiter': 'double',
+                'separator': 'comma',
+                'fromline': 1,
+            }
+            try:
+                data_store = client.create_data_store(data_store_json, data_store_file)
+            except ConnectionError:
+                click.echo("Cannot connect to Load impact API")
+            data_store_ids.append(data_store.id)
+
+    data_store_ids += datastore_id
+
+    if data_store_ids:
+        data[u"data_store_ids"] = data_store_ids
+
     try:
         click.echo(client.create_user_scenario(data=data).script)
     except ConnectionError:
@@ -135,13 +160,18 @@ def get_validation_results(validation):
 
 
 def get_formatted_validation_results(validation_results):
+    formatted_validations = ''
     for result in validation_results:
-        result_in_local_time = result.timestamp.astimezone(get_localzone())
+        result_in_local_time = get_timestamp_as_local_time(result.timestamp)
         result_level_formatted = ''
         if result.level:
             result_level_formatted = '{0} '.format(result.level)
+        formatted_validations += u"{0}[{1}] {2}\n".format(result_level_formatted, result_in_local_time, result.message)
+    return formatted_validations
 
-        return "{0}[{1}] {2}".format(result_level_formatted, result_in_local_time, result.message)
+
+def get_timestamp_as_local_time(timestamp):
+    return timestamp.astimezone(get_localzone())
 
 
 def abort_if_false(ctx, param, value):

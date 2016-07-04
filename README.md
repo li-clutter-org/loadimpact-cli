@@ -28,13 +28,19 @@ The config file will be placed:
 For MacOSX:
 
 ```
-/Library/Application Support/LoadImpact/config.ini
+/Users/<YOUR_USER_NAME>/Library/Application Support/LoadImpact/config.ini
 ```
 
 For Linux:
 
 ```
 ~/.config/LoadImpact/config.ini
+```
+
+For Windows:
+
+```
+\AppData\LoadImpact\config.ini
 ```
 
 The config file should look like this:
@@ -181,7 +187,7 @@ $ loadimpact data-store download 1 --file_name /path/where/you/want/file.csv
 The ```data-store create``` command will create a new Data store containing the file specified.
 
 ```
-$ loadimpact data-store create /path/to/file.csv 'Your Data store name'
+$ loadimpact data-store create  'Your Data store name' /path/to/file.csv
 ```
 
 ### Updating a Data store
