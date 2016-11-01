@@ -1,6 +1,11 @@
 # Load Impact CLI [![Build Status](https://travis-ci.org/loadimpact/loadimpact-cli.png?branch=master,develop)](https://travis-ci.org/loadimpact/loadimpact-cli) [![Coverage Status](https://coveralls.io/repos/loadimpact/loadimpact-cli/badge.svg?branch=develop&service=github)](https://coveralls.io/github/loadimpact/loadimpact-cli?branch=develop)
 
-Command line interface for Load Impact API version 3. This CLI is still in BETA so we are still hunting bugs, adding features and changing things rapidly. 
+This is the Command line interface for Load Impact API version 3. The CLI can perform the following operations:
+- user scenarios: listing, creating, retrieving, validating, updating, deleting
+- data stores: listing, downloading, creating
+- For all other use cases, reference the REST API at http://developer.loadimpact.com/api/index.html
+
+This CLI is still in BETA so we are still hunting bugs, adding features and changing things.
 
 ## Install
 
@@ -21,7 +26,7 @@ pip install loadimpact-cli
 
 ## Configuration
 
-Before running the CLI you need to add your [Load Impact V3 API token](https://app.loadimpact.com/account/api-token) to the config file. You can generate a Load Impact V3 API token in the user profile settings.
+Before running the CLI you need to add your [Load Impact V3 API token](https://app.loadimpact.com/integrations/user-token) to the config file. You can generate a Load Impact V3 API token selecting CLI from the integrations page.
 
 The config file will be placed:
 
