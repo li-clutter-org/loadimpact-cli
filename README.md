@@ -11,6 +11,8 @@ This CLI is still in BETA so we are still hunting bugs, adding features and chan
 
 [![PyPI](https://img.shields.io/pypi/v/loadimpact-cli.svg)](https://pypi.python.org/pypi/loadimpact-cli) [![PyPI](https://img.shields.io/pypi/dm/loadimpact-cli.svg)](https://pypi.python.org/pypi/loadimpact-cli)
 
+As a general recommendation, install `loadimpact-cli` in a `virtualenv` and make sure you use a recently upgraded `pip` install. See [issue #13](https://github.com/loadimpact/loadimpact-cli/issues/13) for some ideas if you are having trouble installing.
+
 ### Install using setup.py
 
 ```
