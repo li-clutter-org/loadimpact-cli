@@ -52,3 +52,14 @@ def list_tests(project_ids):
             click.echo('{0}\t{1}\t{2}\t{3}'.format(test_.id, test_.name, last_run_date, test_.config))
     except ConnectionError:
         click.echo("Cannot connect to Load impact API")
+
+
+@test.command('run', short_help='Run a test.')
+@click.argument('test_id')
+def list_tests(test_id):
+    try:
+        test_ = client.get_test(test_id)
+        test_run = test_.start_test_run()
+        click.echo('{0}'.format(test_run.id))
+    except ConnectionError:
+        click.echo("Cannot connect to Load impact API")
