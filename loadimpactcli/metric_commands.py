@@ -47,10 +47,9 @@ def metric(ctx):
               help='Metric type to include on the list.')
 def list_metrics(test_run_id, metric_types):
     try:
-        data = ','.join(str(TEXT_TO_TYPE_CODE_MAP[k]) for k in metric_types)
-        print data
+        types = ','.join(str(TEXT_TO_TYPE_CODE_MAP[k]) for k in metric_types)
         test_run = client.get_test_run(test_run_id)
-        result_ids = test_run.list_test_run_result_ids(data=data)
+        result_ids = test_run.list_test_run_result_ids(data={'types': types})
 
         click.echo('NAME:\tTYPE:')
         for result_id in result_ids:
