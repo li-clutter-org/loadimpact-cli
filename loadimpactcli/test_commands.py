@@ -56,10 +56,19 @@ def list_tests(project_ids):
 
 @test.command('run', short_help='Run a test.')
 @click.argument('test_id')
-def list_tests(test_id):
+@click.option('--quiet/--no-quiet', default=False, help='Disable streaming of metrics to stdout.')
+@click.option('--metric', 'result_ids', multiple=True, help='Name of the metric to stream.')
+def list_tests(test_id, quiet, result_ids):
     try:
         test_ = client.get_test(test_id)
         test_run = test_.start_test_run()
-        click.echo('{0}'.format(test_run.id))
+        click.echo('TEST_RUN_ID:\n{0}'.format(test_run.id))
+
+        if not quiet:
+            click.echo('METRIC:\tVALUE:')
+            stream = test_run.result_stream(result_ids)
+            for data in stream(poll_rate=3):
+                for metric_id in (result_ids or data.keys()):
+                    click.echo('{0}\t{1}'.format(metric_id, data[metric_id]))
     except ConnectionError:
         click.echo("Cannot connect to Load impact API")
