@@ -65,10 +65,14 @@ def list_tests(test_id, quiet, result_ids):
         click.echo('TEST_RUN_ID:\n{0}'.format(test_run.id))
 
         if not quiet:
-            click.echo('METRIC:\tVALUE:')
+            click.echo('TIMESTAMP:\tMETRIC:\tAGGREGATE:\tVALUE:')
             stream = test_run.result_stream(result_ids)
             for data in stream(poll_rate=3):
-                for metric_id in (result_ids or data.keys()):
-                    click.echo('{0}\t{1}'.format(metric_id, data[metric_id]))
+                for metric_id in (result_ids or sorted(data.keys())):
+                    click.echo('{0}\t{1}\t{2}\t{3}'.format(
+                        data[metric_id].timestamp,
+                        metric_id,
+                        data[metric_id].aggregate_function,
+                        data[metric_id].value))
     except ConnectionError:
         click.echo("Cannot connect to Load impact API")
