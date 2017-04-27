@@ -14,6 +14,7 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 """
+from operator import attrgetter
 
 import click
 
@@ -44,12 +45,13 @@ def list_tests(project_ids):
             tests.extend(client.list_tests(project_id=id_))
 
         click.echo("ID:\tNAME:\tLAST RUN DATE:\tCONFIG:")
-        for test_ in tests:
+        for test_ in sorted(tests, key=attrgetter('id')):
             last_run_date = None
             if test_.last_test_run_id:
                 last_run_date = client.get_test_run(test_.last_test_run_id).queued
 
-            click.echo('{0}\t{1}\t{2}\t{3}'.format(test_.id, test_.name, last_run_date, test_.config))
+            click.echo('{0}\t{1}\t{2}\t{3}'.format(test_.id, test_.name, last_run_date,
+                                                   summarize_config(test_.config)))
     except ConnectionError:
         click.echo("Cannot connect to Load impact API")
 
@@ -76,3 +78,18 @@ def list_tests(test_id, quiet, result_ids):
                         data[metric_id].value))
     except ConnectionError:
         click.echo("Cannot connect to Load impact API")
+
+
+def summarize_config(config):
+    try:
+        str_tracks = ['#{0} {1}% at {2}'.format(track[u'clips'][0]['user_scenario_id'],
+                                                track[u'clips'][0]['percent'],
+                                                track[u'loadzone'])
+                      for track in config[u'tracks']]
+        str_schedules = ['{0}s {1}users'.format(schedule[u'duration'], schedule[u'users'])
+                         for schedule in config[u'load_schedule']]
+
+        return ' | '.join(['; '.join(str_) for str_ in [str_tracks, str_schedules]])
+
+    except (KeyError, IndexError, ValueError, TypeError):
+        return config
