@@ -60,7 +60,7 @@ def list_tests(project_ids):
 @click.argument('test_id')
 @click.option('--quiet/--no-quiet', default=False, help='Disable streaming of metrics to stdout.')
 @click.option('--metric', 'result_ids', multiple=True, help='Name of the metric to stream.')
-def list_tests(test_id, quiet, result_ids):
+def run_tests(test_id, quiet, result_ids):
     try:
         test_ = client.get_test(test_id)
         test_run = test_.start_test_run()
