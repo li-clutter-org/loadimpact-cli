@@ -80,14 +80,18 @@ $ loadimpact
 Usage: loadimpact [OPTIONS] COMMAND [ARGS]...
 
 Options:
-  --help  Show this message and exit.
   --version  Show the version and exit.
+  --help     Show this message and exit.
 
 Commands:
-  organization
-  user-scenario
   data-store
+  metric
+  organization
+  test
+  user-scenario
 ```
+
+## Working with organizations and projects
 
 #### Listing organizations
 
@@ -233,6 +237,83 @@ The ```data-store update``` command will update the file of the specified Data s
 
 ```
 $ loadimpact data-store update 1 /path/to/file.csv
+```
+
+## Working with Tests
+
+#### Listing Tests
+
+The `test list` command lists the Tests you have access to:
+```
+$ loadimpact test list
+
+ID: NAME:           LAST RUN DATE:        LAST RUN STATUS:    CONFIG:
+123 My test name    2017-01-02 03:04:05   Finished            #321 100% at amazon:ie:dublin | 1s 50users
+456 My second test  2017-02-03 12:34:56   Aborted by user     #987 100% at amazon:ie:dublin | 10s 50users
+```
+
+By default, it will display all the Tests from all the Projects from all the
+Organizations you have access to. This can be narrowed down by the
+`--project_id` flag:
+```
+$ loadimpact test list --project_id 100 --project_id 200
+```
+
+#### Running Tests
+
+The `test run` command launches a Test Run from an existing Test:
+```
+$ loadimpact test run 123
+```
+
+The command will periodically print the metrics collected during the test run
+(defaulting to VUs, requests/second, bandwidth, VU load time and failure rate)
+until the test run is finished:
+
+```
+$ loadimpact test run 123
+
+TEST_RUN_ID:
+456
+TIMESTAMP:           METRIC:                      AGGREGATE:  VALUE:
+2017-01-02 03:04:00  __li_bandwidth:1             avg         1111.2222
+2017-01-02 03:04:00  __li_clients_active:1        value       5.0
+2017-01-02 03:04:00  __li_requests_per_second:1   avg         8.7654321
+2017-01-02 03:04:03  __li_bandwidth:1             avg         2222.3333
+2017-01-02 03:04:03  __li_clients_active:1        value       10.0
+2017-01-02 03:04:03  __li_requests_per_second:1   avg         9.8765432
+...
+```
+
+This output can be disabled by the `--quiet` flag. The metrics displayed can
+also be selected using the `--metric` flag:
+
+```
+$ loadimpact test run 123 --metric __li_bandwidth --metric __li_clients_active:1
+```
+
+## Working with Metrics
+
+#### Listing Metrics
+
+The `metric list` command lists the Metrics available for a Test Run:
+```
+$ loadimpact metric list 789
+
+NAME:                                                       TYPE:
+__li_user_load_time:1                                       common
+__li_total_requests:1                                       common
+...
+__li_url_b2d8b7afb66fd4d3c7faf263b13228e9:13:225:200:GET    url
+__li_url_b2d8b7afb66fd4d3c7faf263b13228e9:1:225:200:GET url
+...
+```
+
+The list of metrics to output can be narrowed down by metric type by using the
+`--type` flag:
+
+```
+$ loadimpact metric list 789 --type common --type log
 ```
 
 ## Contribute!

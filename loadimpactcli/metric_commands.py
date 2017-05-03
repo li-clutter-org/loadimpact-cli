@@ -30,7 +30,7 @@ TEXT_TO_TYPE_CODE_MAP = {
     'page': 6,
     'dtp': 7,
     'system': 8,
-    'server metric': 9,
+    'server_metric': 9,
     'integration': 10
 }
 
