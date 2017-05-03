@@ -33,7 +33,7 @@ except ImportError:
 
 
 Test = namedtuple('Test', ['id', 'name', 'last_test_run_id', 'config'])
-TestRun = namedtuple('TestRun', ['id', 'queued'])
+TestRun = namedtuple('TestRun', ['id', 'queued', 'status_text'])
 Organization = namedtuple('Organization', ['id'])
 Project = namedtuple('Project', ['id'])
 
@@ -54,7 +54,7 @@ class TestTest(unittest.TestCase):
 
         # Setup mockers.
         client.list_tests = MagicMock(return_value=self.tests)
-        client.get_test_run = MagicMock(return_value=TestRun(1, datetime.now()))
+        client.get_test_run = MagicMock(return_value=TestRun(1, datetime.now(), 'status'))
         result = self.runner.invoke(test_commands.list_tests, ['--project_id', '1'])
 
         self.assertEqual(client.list_tests.call_count, 1)
@@ -73,7 +73,7 @@ class TestTest(unittest.TestCase):
 
         # Setup mockers.
         client.list_tests = MagicMock(return_value=self.tests)
-        client.get_test_run = MagicMock(return_value=TestRun(1, datetime.now()))
+        client.get_test_run = MagicMock(return_value=TestRun(1, datetime.now(), 'status'))
         result = self.runner.invoke(test_commands.list_tests, ['--project_id', '1',
                                                                '--project_id', '2'])
 
@@ -92,7 +92,7 @@ class TestTest(unittest.TestCase):
 
         # Setup mockers.
         client.list_tests = MagicMock(return_value=self.tests)
-        client.get_test_run = MagicMock(return_value=TestRun(1, datetime.now()))
+        client.get_test_run = MagicMock(return_value=TestRun(1, datetime.now(), 'status'))
         client.list_organizations = MagicMock(return_value=[Organization(1), Organization(2)])
         client.list_organization_projects = MagicMock(side_effect=[[Project(1), Project(2)],
                                                                    [Project(3), Project(4)]])

@@ -44,14 +44,17 @@ def list_tests(project_ids):
         for id_ in set(project_ids):
             tests.extend(client.list_tests(project_id=id_))
 
-        click.echo("ID:\tNAME:\tLAST RUN DATE:\tCONFIG:")
+        click.echo("ID:\tNAME:\tLAST RUN DATE:\tLAST RUN STATUS:\tCONFIG:")
         for test_ in sorted(tests, key=attrgetter('id')):
-            last_run_date = None
+            last_run_date = last_run_status = '-'
             if test_.last_test_run_id:
-                last_run_date = client.get_test_run(test_.last_test_run_id).queued
+                last_run = client.get_test_run(test_.last_test_run_id)
+                last_run_date = last_run.queued
+                last_run_status = last_run.status_text
 
-            click.echo('{0}\t{1}\t{2}\t{3}'.format(test_.id, test_.name, last_run_date,
-                                                   summarize_config(test_.config)))
+            click.echo('{0}\t{1}\t{2}\t{3}\t{4}'.format(
+                test_.id, test_.name, last_run_date, last_run_status,
+                summarize_config(test_.config)))
     except ConnectionError:
         click.echo("Cannot connect to Load impact API")
 
