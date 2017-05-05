@@ -248,8 +248,8 @@ The `test list` command lists the Tests you have access to:
 $ loadimpact test list
 
 ID: NAME:           LAST RUN DATE:        LAST RUN STATUS:    CONFIG:
-123 My test name    2017-01-02 03:04:05   Finished            #321 100% at amazon:ie:dublin | 1s 50users
-456 My second test  2017-02-03 12:34:56   Aborted by user     #987 100% at amazon:ie:dublin | 10s 50users
+123 My test name    2017-01-02 03:04:05   Finished            50 users 2s
+456 My second test  2017-02-03 12:34:56   Aborted by user     10 users 5s; 100 users 60s
 ```
 
 By default, it will display all the Tests from all the Projects from all the

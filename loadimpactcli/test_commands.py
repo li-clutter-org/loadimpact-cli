@@ -19,6 +19,7 @@ from operator import attrgetter
 import click
 
 from loadimpact3.exceptions import ConnectionError
+from loadimpactcli.util import TestRunStatus
 from .client import client
 
 
@@ -50,7 +51,8 @@ def list_tests(project_ids):
             if test_.last_test_run_id:
                 last_run = client.get_test_run(test_.last_test_run_id)
                 last_run_date = last_run.queued
-                last_run_status = last_run.status_text
+                last_run_status = click.style(last_run.status_text,
+                                              fg=TestRunStatus(last_run.status).style.value)
 
             click.echo(u'{0}\t{1}\t{2}\t{3}\t{4}'.format(
                 test_.id, test_.name, last_run_date, last_run_status,
@@ -85,14 +87,11 @@ def run_tests(test_id, quiet, result_ids):
 
 def summarize_config(config):
     try:
-        str_tracks = [u'#{0} {1}% at {2}'.format(track[u'clips'][0]['user_scenario_id'],
-                                                track[u'clips'][0]['percent'],
-                                                track[u'loadzone'])
-                      for track in config[u'tracks']]
-        str_schedules = [u'{0}s {1}users'.format(schedule[u'duration'], schedule[u'users'])
+        str_schedules = [u'{0} users {1}s'.format(schedule[u'users'], schedule[u'duration'])
                          for schedule in config[u'load_schedule']]
 
-        return u' | '.join(['; '.join(str_) for str_ in [str_tracks, str_schedules]])
+        return '; '.join(str_schedules)
 
     except (KeyError, IndexError, ValueError, TypeError):
-        return config
+        # Do not attempt to show the configuration, for UI-conciseness purposes.
+        return '-'

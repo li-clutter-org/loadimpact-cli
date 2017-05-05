@@ -33,7 +33,7 @@ except ImportError:
 
 
 Test = namedtuple('Test', ['id', 'name', 'last_test_run_id', 'config'])
-TestRun = namedtuple('TestRun', ['id', 'queued', 'status_text'])
+TestRun = namedtuple('TestRun', ['id', 'queued', 'status', 'status_text'])
 Organization = namedtuple('Organization', ['id'])
 Project = namedtuple('Project', ['id'])
 
@@ -54,7 +54,7 @@ class TestTest(unittest.TestCase):
 
         # Setup mockers.
         client.list_tests = MagicMock(return_value=self.tests)
-        client.get_test_run = MagicMock(return_value=TestRun(1, datetime.now(), 'status'))
+        client.get_test_run = MagicMock(return_value=TestRun(1, datetime.now(), 0, 'status'))
         result = self.runner.invoke(test_commands.list_tests, ['--project_id', '1'])
 
         self.assertEqual(client.list_tests.call_count, 1)
@@ -73,7 +73,7 @@ class TestTest(unittest.TestCase):
 
         # Setup mockers.
         client.list_tests = MagicMock(return_value=self.tests)
-        client.get_test_run = MagicMock(return_value=TestRun(1, datetime.now(), 'status'))
+        client.get_test_run = MagicMock(return_value=TestRun(1, datetime.now(), 0, 'status'))
         result = self.runner.invoke(test_commands.list_tests, ['--project_id', '1',
                                                                '--project_id', '2'])
 
@@ -92,7 +92,7 @@ class TestTest(unittest.TestCase):
 
         # Setup mockers.
         client.list_tests = MagicMock(return_value=self.tests)
-        client.get_test_run = MagicMock(return_value=TestRun(1, datetime.now(), 'status'))
+        client.get_test_run = MagicMock(return_value=TestRun(1, datetime.now(), 0, 'status'))
         client.list_organizations = MagicMock(return_value=[Organization(1), Organization(2)])
         client.list_organization_projects = MagicMock(side_effect=[[Project(1), Project(2)],
                                                                    [Project(3), Project(4)]])
@@ -116,13 +116,14 @@ class TestTest(unittest.TestCase):
                   ],
                   u'url_groups': [],
                   u'load_schedule': [
-                      {u'duration': 1, u'users': 50}
+                      {u'duration': 1, u'users': 50},
+                      {u'duration': 2, u'users': 100}
                   ],
                   u'source_ips': 0}
         summary = test_commands.summarize_config(config)
-        self.assertEqual(summary, '#225 100% at amazon:ie:dublin | 1s 50users')
+        self.assertEqual(summary, '50 users 1s; 100 users 2s')
 
     def test_summarize_invalid_config(self):
         config = 'INVALID'
         summary = test_commands.summarize_config(config)
-        self.assertEqual(summary, config)
+        self.assertEqual(summary, '-')
