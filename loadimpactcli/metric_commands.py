@@ -54,6 +54,6 @@ def list_metrics(test_run_id, metric_types):
         click.echo('NAME:\tTYPE:')
         for result_id in sorted(result_ids, key=attrgetter('type')):
             for key, _ in sorted(result_id.ids.items()):
-                click.echo('{0}\t{1}'.format(key, result_id.results_type_code_to_text(result_id.type)))
+                click.echo(u'{0}\t{1}'.format(key, result_id.results_type_code_to_text(result_id.type)))
     except ConnectionError:
         click.echo("Cannot connect to Load impact API")

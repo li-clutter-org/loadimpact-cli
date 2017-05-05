@@ -52,7 +52,7 @@ def list_tests(project_ids):
                 last_run_date = last_run.queued
                 last_run_status = last_run.status_text
 
-            click.echo('{0}\t{1}\t{2}\t{3}\t{4}'.format(
+            click.echo(u'{0}\t{1}\t{2}\t{3}\t{4}'.format(
                 test_.id, test_.name, last_run_date, last_run_status,
                 summarize_config(test_.config)))
     except ConnectionError:
@@ -74,7 +74,7 @@ def run_tests(test_id, quiet, result_ids):
             stream = test_run.result_stream(result_ids)
             for data in stream(poll_rate=3):
                 for metric_id in (result_ids or sorted(data.keys())):
-                    click.echo('{0}\t{1}\t{2}\t{3}'.format(
+                    click.echo(u'{0}\t{1}\t{2}\t{3}'.format(
                         data[metric_id].timestamp,
                         metric_id,
                         data[metric_id].aggregate_function,
@@ -85,14 +85,14 @@ def run_tests(test_id, quiet, result_ids):
 
 def summarize_config(config):
     try:
-        str_tracks = ['#{0} {1}% at {2}'.format(track[u'clips'][0]['user_scenario_id'],
+        str_tracks = [u'#{0} {1}% at {2}'.format(track[u'clips'][0]['user_scenario_id'],
                                                 track[u'clips'][0]['percent'],
                                                 track[u'loadzone'])
                       for track in config[u'tracks']]
-        str_schedules = ['{0}s {1}users'.format(schedule[u'duration'], schedule[u'users'])
+        str_schedules = [u'{0}s {1}users'.format(schedule[u'duration'], schedule[u'users'])
                          for schedule in config[u'load_schedule']]
 
-        return ' | '.join(['; '.join(str_) for str_ in [str_tracks, str_schedules]])
+        return u' | '.join(['; '.join(str_) for str_ in [str_tracks, str_schedules]])
 
     except (KeyError, IndexError, ValueError, TypeError):
         return config
