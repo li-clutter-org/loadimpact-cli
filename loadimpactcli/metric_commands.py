@@ -20,6 +20,7 @@ import click
 
 from loadimpact3.exceptions import ConnectionError
 from .client import client
+from .util import Metric
 
 # TestRunResults type codes.
 TEXT_TO_TYPE_CODE_MAP = {
@@ -51,9 +52,13 @@ def list_metrics(test_run_id, metric_types):
         types = ','.join(str(TEXT_TO_TYPE_CODE_MAP[k]) for k in metric_types)
         result_ids = client.list_test_run_result_ids(test_run_id, data={'types': types})
 
-        click.echo('NAME:\tTYPE:')
+        click.echo('NAME:\tARGUMENT NAME:\tTYPE:')
         for result_id in sorted(result_ids, key=attrgetter('type')):
             for key, _ in sorted(result_id.ids.items()):
-                click.echo(u'{0}\t{1}'.format(key, result_id.results_type_code_to_text(result_id.type)))
+                metric_ = Metric.from_raw(key)
+
+                click.echo(u'{0}\t{1}\t{2}'.format(key,
+                                                   metric_.str_param(),
+                                                   result_id.results_type_code_to_text(result_id.type)))
     except ConnectionError:
         click.echo("Cannot connect to Load impact API")

@@ -14,13 +14,13 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 """
-from operator import attrgetter
+from operator import attrgetter, methodcaller
 
 import click
 
 from loadimpact3.exceptions import ConnectionError
-from loadimpactcli.util import TestRunStatus
 from .client import client
+from .util import TestRunStatus, Metric, DefaultMetricType
 
 
 @click.group()
@@ -64,25 +64,58 @@ def list_tests(project_ids):
 @test.command('run', short_help='Run a test.')
 @click.argument('test_id')
 @click.option('--quiet/--no-quiet', default=False, help='Disable streaming of metrics to stdout.')
-@click.option('--metric', 'result_ids', multiple=True, help='Name of the metric to stream.')
-def run_tests(test_id, quiet, result_ids):
+@click.option('--metric', 'standard_metrics', multiple=True,
+              help='Name of the standard metric to stream (aggregated world load zone).',
+              type=click.Choice([m.name.lower() for m in list(DefaultMetricType)]))
+@click.option('--raw_metric', 'raw_metrics', multiple=True, help='Raw name of the metric to stream.')
+def run_tests(test_id, quiet, standard_metrics, raw_metrics):
     try:
         test_ = client.get_test(test_id)
         test_run = test_.start_test_run()
         click.echo('TEST_RUN_ID:\n{0}'.format(test_run.id))
 
         if not quiet:
-            click.echo('TIMESTAMP:\tMETRIC:\tAGGREGATE:\tVALUE:')
-            stream = test_run.result_stream(result_ids)
+            # Prepare metrics.
+            metrics = sorted([Metric.from_raw(m) for m in standard_metrics + raw_metrics],
+                             key=methodcaller('str_raw', True))
+            if not metrics:
+                metrics = [Metric(DefaultMetricType.CLIENTS_ACTIVE, ['1']),
+                           Metric(DefaultMetricType.REQUESTS_PER_SECOND, ['1']),
+                           Metric(DefaultMetricType.BANDWIDTH, ['1']),
+                           Metric(DefaultMetricType.USER_LOAD_TIME, ['1']),
+                           Metric(DefaultMetricType.FAILURE_RATE, ['1'])]
+
+            stream = test_run.result_stream([m.str_raw(True) for m in metrics])
+
+            click.echo(pprint_header(metrics))
             for data in stream(poll_rate=3):
-                for metric_id in (result_ids or sorted(data.keys())):
-                    click.echo(u'{0}\t{1}\t{2}\t{3}'.format(
-                        data[metric_id].timestamp,
-                        metric_id,
-                        data[metric_id].aggregate_function,
-                        data[metric_id].value))
+                click.echo(pprint_row(data, metrics))
+
     except ConnectionError:
         click.echo("Cannot connect to Load impact API")
+
+
+def pprint_header(returned_metrics):
+    """
+    Return a pretty printed string with the header of the metric streaming
+    output, consisting of the name of the metrics including the parameters.
+    """
+    return u'\t'.join([u'TIMESTAMP:'] + [u'{0}:'.format(m.str_ui(True)) for m in returned_metrics])
+
+
+def pprint_row(data, returned_metrics):
+    """
+    Return a pretty printed string with a row of the metric streaming
+    output, consisting of the values of the metrics.
+    """
+    parts = ['u{0}'.format(next(iter(data.items()))[1].timestamp)]
+    for m in returned_metrics:
+        try:
+            parts.append(unicode(data[m.str_raw(True)].value))
+        except KeyError:
+            parts.append('-')
+
+    return u'\t'.join(parts)
 
 
 def summarize_config(config):

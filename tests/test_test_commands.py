@@ -38,7 +38,7 @@ Organization = namedtuple('Organization', ['id'])
 Project = namedtuple('Project', ['id'])
 
 
-class TestTest(unittest.TestCase):
+class TestTests(unittest.TestCase):
 
     def setUp(self):
         self.runner = CliRunner()
