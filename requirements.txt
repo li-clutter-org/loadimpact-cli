@@ -2,3 +2,4 @@ loadimpact-v3==0.0.3
 click==6.2
 tzlocal==1.2.2
 six==1.10.0
+enum34==1.1.6
