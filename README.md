@@ -275,22 +275,30 @@ $ loadimpact test run 123
 
 TEST_RUN_ID:
 456
-TIMESTAMP:           METRIC:                      AGGREGATE:  VALUE:
-2017-01-02 03:04:00  __li_bandwidth:1             avg         1111.2222
-2017-01-02 03:04:00  __li_clients_active:1        value       5.0
-2017-01-02 03:04:00  __li_requests_per_second:1   avg         8.7654321
-2017-01-02 03:04:03  __li_bandwidth:1             avg         2222.3333
-2017-01-02 03:04:03  __li_clients_active:1        value       10.0
-2017-01-02 03:04:03  __li_requests_per_second:1   avg         9.8765432
+TIMESTAMP:           VUs [1]: reqs/s [1]: bandwidth [1]: user load time [1]: failure rate [1]:
+2017-01-02 03:04:00  5.0      6.626671    89340.2656     -                   -
+2017-01-02 03:04:03  8.0      3.956092    53336.0410     -                   -
+2017-01-02 03:04:06  10.0     2.644981    35659.6385     -                   -
+2017-01-02 03:04:09  15.0     3.970042    53524.1070     -                   -
+2017-01-02 03:04:12  17.0     2.646911    35685.6541     -                   -
+2017-01-02 03:04:15  20.0     3.969141    53511.9623     -                   -
+2017-01-02 03:04:18  22.0     6.613472    89162.8336     235.73              -
+2017-01-02 03:04:21  25.0     5.289569    71313.9719     234.3               -
 ...
 ```
 
 This output can be disabled by the `--quiet` flag. The metrics displayed can
-also be selected using the `--metric` flag:
+also be selected using the `--metric` flag (in the case of default metrics) or
+the `--raw_metric` flag (that allows the passing of parameters for the metrics
+as defined the [in the documentation][api-results] directly):
 
 ```
-$ loadimpact test run 123 --metric __li_bandwidth --metric __li_clients_active:1
+$ loadimpact test run 123 --metric bandwidth --raw_metric __li_url_c7cb000532b49c3b1c3f3c1928f74b88:1:225:200:GET
 ```
+
+Please note that the default metrics (the ones selected by using the
+`--metric` flag) will by default display the first aggregation function for
+the aggregated world load zone.
 
 ## Working with Metrics
 
@@ -300,12 +308,15 @@ The `metric list` command lists the Metrics available for a Test Run:
 ```
 $ loadimpact metric list 789
 
-NAME:                                                       TYPE:
-__li_user_load_time:1                                       common
-__li_total_requests:1                                       common
-...
-__li_url_b2d8b7afb66fd4d3c7faf263b13228e9:13:225:200:GET    url
-__li_url_b2d8b7afb66fd4d3c7faf263b13228e9:1:225:200:GET url
+NAME:                                                    ARGUMENT NAME:  TYPE:
+__li_bandwidth:1                                         bandwidth       common
+__li_bandwidth:13                                        bandwidth       common
+__li_clients_active:1                                    clients_active  common
+__li_clients_active:13                                   clients_active  common
+__li_user_load_time:1                                    user_load_time  common
+__li_user_load_time:13                                   user_load_time  common
+__li_url_69e369c64ef5e40f6fd8566e4163860d:13:225:200:GET -               url
+__li_url_69e369c64ef5e40f6fd8566e4163860d:1:225:200:GET  -               url
 ...
 ```
 
@@ -326,3 +337,5 @@ $ python setup.py test
 ```
 
 If you've found a bug or something isn't working properly, please don't hesitate to create a ticket for us! 
+
+[api-results]: http://developers.loadimpact.com/api/#get-tests-id-results

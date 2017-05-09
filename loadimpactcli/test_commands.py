@@ -108,12 +108,12 @@ def pprint_row(data, returned_metrics):
     Return a pretty printed string with a row of the metric streaming
     output, consisting of the values of the metrics.
     """
-    parts = ['u{0}'.format(next(iter(data.items()))[1].timestamp)]
+    parts = [u'{0}'.format(next(iter(data.items()))[1].timestamp)]
     for m in returned_metrics:
         try:
             parts.append(unicode(data[m.str_raw(True)].value))
         except KeyError:
-            parts.append('-')
+            parts.append(u'-')
 
     return u'\t'.join(parts)
 
