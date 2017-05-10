@@ -65,10 +65,10 @@ def list_tests(project_ids):
 @click.argument('test_id')
 @click.option('--quiet/--no-quiet', default=False, help='Disable streaming of metrics to stdout.')
 @click.option('--metric', 'standard_metrics', multiple=True,
-              help='Name of the standard metric to stream (aggregated world load zone).',
+              help='Name of the standard metric to stream (implies aggregated world load zone).',
               type=click.Choice([m.name.lower() for m in list(DefaultMetricType)]))
 @click.option('--raw_metric', 'raw_metrics', multiple=True, help='Raw name of the metric to stream.')
-def run_tests(test_id, quiet, standard_metrics, raw_metrics):
+def run_test(test_id, quiet, standard_metrics, raw_metrics):
     try:
         test_ = client.get_test(test_id)
         test_run = test_.start_test_run()
@@ -108,10 +108,14 @@ def pprint_row(data, returned_metrics):
     Return a pretty printed string with a row of the metric streaming
     output, consisting of the values of the metrics.
     """
-    parts = [u'{0}'.format(next(iter(data.items()))[1].timestamp)]
+    try:
+        parts = [u'{0}'.format(next(iter(data.items()))[1].timestamp)]
+    except (StopIteration, AttributeError):
+        return u''
+
     for m in returned_metrics:
         try:
-            parts.append(unicode(data[m.str_raw(True)].value))
+            parts.append(u'{0}'.format(data[m.str_raw(True)].value))
         except KeyError:
             parts.append(u'-')
 

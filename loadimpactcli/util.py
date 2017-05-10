@@ -65,9 +65,6 @@ class TestRunStatus(Enum):
 
 
 class DefaultMetricType(Enum):
-    """
-    Representation of a Metric.
-    """
     ACCUMULATED_LOAD_TIME = 'acc load time'
     BANDWIDTH = 'bandwidth'
     CLIENTS_ACTIVE = 'VUs'
@@ -121,8 +118,16 @@ class OtherMetricType(object):
 
         return self.metric_id
 
+    def __eq__(self, other):
+            return self.metric_id == other.metric_id
+
 
 class Metric(object):
+    """
+    Utility class for representing a Metric, allowing to obtain the different
+    string representations (`str_raw()`, `str_param()`, `str_ui()`) and access
+    the metric type and parameters.
+    """
     def __init__(self, metric_type, params):
         self.metric_type = metric_type
         self.params = params
@@ -132,25 +137,42 @@ class Metric(object):
         # Split the string into metric id and parameters.
         str_raw = str_raw.split('|')[0]
         str_parts = str_raw.split(':')
-        str_raw, params = str_parts[0], str_parts[1:] or ['1']
+        str_raw, params = str_parts[0], str_parts[1:]
 
         try:
             metric_type = DefaultMetricType.from_raw(str_raw)
+            if not params:
+                # For standard metrics, append aggregated world load zone
+                # parameter if no parameters are passed.
+                params = ['1']
         except KeyError:
             metric_type = OtherMetricType(str_raw)
         return cls(metric_type, params)
 
     def str_param(self):
+        """
+        Return the user-friendly representation of the metric, as expected by
+        the CLI arguments.
+        """
         return self.metric_type.str_param()
 
     def str_raw(self, with_params=False):
+        """
+        Return the "raw" representation of the metric, as used by the API.
+        """
         if with_params:
             return u':'.join([self.metric_type.str_raw()] + self.params)
         else:
             return self.metric_type.str_raw()
 
     def str_ui(self, with_params=False):
+        """
+        Return the representation of the metric for display purposes.
+        """
         if with_params and self.params:
             return u'{0} [{1}]'.format(self.metric_type.str_ui(), u' '.join(self.params))
         else:
             return self.metric_type.str_ui()
+
+    def __eq__(self, other):
+            return self.metric_type == other.metric_type and self.params == other.params
