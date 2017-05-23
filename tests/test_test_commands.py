@@ -44,9 +44,9 @@ class TestTestsList(unittest.TestCase):
 
     def setUp(self):
         self.runner = CliRunner()
-        self.tests = [Test(1, 'Test1', 10001, ''),
+        self.tests = [Test(1, 'Test1', 10003, ''),
                       Test(2, 'Test2', 10002, ''),
-                      Test(3, 'Test3', 10003, '')]
+                      Test(3, 'Test3', 10001, '')]
 
     def test_list_tests_one_project_id(self):
         """
@@ -107,6 +107,35 @@ class TestTestsList(unittest.TestCase):
         output = result.output.split('\n')
         self.assertEqual(len(output), 2+2*2*3)
 
+    def test_list_tests_limit_not_hit(self):
+        """
+        Test "test list" with the limit flag.
+        """
+        client = test_commands.client
+
+        # Setup mockers.
+        client.list_tests = MagicMock(return_value=self.tests)
+        client.get_test_run = MagicMock(return_value=TestRun(1, datetime.now(), 0, 'status'))
+
+        # Invokation without flag: limit is 20, all tests are listed, no extra line.
+        result = self.runner.invoke(test_commands.list_tests, ['--project_id', '1'])
+
+        self.assertEqual(client.list_tests.call_count, 1)
+        self.assertEqual(client.get_test_run.call_count, 3)
+        output = result.output.split('\n')
+        self.assertEqual(len(output), 2+3)
+
+        # Invokation with flag: limit is 1, 1 test listed, extra line.
+        client.list_tests.reset_mock()
+        client.get_test_run.reset_mock()
+        result = self.runner.invoke(test_commands.list_tests, ['--project_id', '1',
+                                                               '--limit', '1'])
+
+        self.assertEqual(client.list_tests.call_count, 1)
+        self.assertEqual(client.get_test_run.call_count, 1)
+        output = result.output.split('\n')
+        self.assertEqual(len(output), 2+1+1)
+
     def test_summarize_valid_config(self):
         config = {u'new_relic_applications': [],
                   u'network_emulation': {u'client': u'li', u'network': u'unlimited'},
@@ -148,7 +177,7 @@ class TestTestsRun(unittest.TestCase):
                            Metric.from_raw('requests_per_second'),
                            Metric.from_raw('bandwidth'),
                            Metric.from_raw('user_load_time'),
-                           Metric.from_raw('failure_rate'),]
+                           Metric.from_raw('failure_rate')]
         self._assertMetricHeader(
             u'VUs [1]:\treqs/s [1]:\tbandwidth [1]:\tuser load time [1]:\tfailure rate [1]:',
             default_metrics)
@@ -174,7 +203,7 @@ class TestTestsRun(unittest.TestCase):
         self.assertEqual(test_commands.pprint_row(data, metrics), '')
 
         # Only timestamp (not one of the requested metrics) returned.
-        data = {'somerandomkey': StreamData(datetime.now(), 1),}
+        data = {'somerandomkey': StreamData(datetime.now(), 1)}
         self.assertEqual(test_commands.pprint_row(data, metrics).split('\t', 1)[1], u'-\t-')
 
         # Data returned for one metric.
@@ -183,7 +212,7 @@ class TestTestsRun(unittest.TestCase):
 
         # Data returned for both metrics.
         data = {metrics[0].str_raw(True): StreamData(datetime.now(), 123),
-                metrics[1].str_raw(True): StreamData(datetime.now(), 'xyz'),}
+                metrics[1].str_raw(True): StreamData(datetime.now(), 'xyz')}
         self.assertEqual(test_commands.pprint_row(data, metrics).split('\t', 1)[1], u'123\txyz')
 
     def test_run_no_streaming(self):

@@ -83,9 +83,9 @@ def create_scenario(script_file, name, project_id, datastore_file, datastore_id)
             }
             try:
                 data_store = client.create_data_store(data_store_json, data_store_file)
+                data_store_ids.append(data_store.id)
             except ConnectionError:
                 click.echo("Cannot connect to Load impact API")
-            data_store_ids.append(data_store.id)
 
     data_store_ids += datastore_id
 

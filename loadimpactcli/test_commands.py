@@ -31,7 +31,8 @@ def test(ctx):
 
 @test.command('list', short_help='List tests.')
 @click.option('--project_id', 'project_ids', multiple=True, help='Id of the project to list tests from.')
-def list_tests(project_ids):
+@click.option('--limit', 'display_limit', default=20, help='Maximum number of tests to display.')
+def list_tests(project_ids, display_limit):
     try:
         if not project_ids:
             # If no project_id is specified, retrieve all projects the user has access to.
@@ -46,7 +47,11 @@ def list_tests(project_ids):
             tests.extend(client.list_tests(project_id=id_))
 
         click.echo("ID:\tNAME:\tLAST RUN DATE:\tLAST RUN STATUS:\tCONFIG:")
-        for test_ in sorted(tests, key=attrgetter('id')):
+
+        # Display the tests sorted by descending test_run ID, and limit the
+        # list according to the display_limit argument.
+        tests = sorted(tests, key=attrgetter('last_test_run_id'), reverse=True)
+        for test_ in tests[:display_limit]:
             last_run_date = last_run_status = '-'
             if test_.last_test_run_id:
                 last_run = client.get_test_run(test_.last_test_run_id)
@@ -57,6 +62,10 @@ def list_tests(project_ids):
             click.echo(u'{0}\t{1}\t{2}\t{3}\t{4}'.format(
                 test_.id, test_.name, last_run_date, last_run_status,
                 summarize_config(test_.config)))
+
+        if len(tests) > display_limit:
+            click.echo("Only the first {0} tests (out of {1}) are displayed. This behaviour can be"
+                       "changed using the --limit argument.".format(display_limit, len(tests)))
     except ConnectionError:
         click.echo("Cannot connect to Load impact API")
 
