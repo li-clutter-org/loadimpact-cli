@@ -252,12 +252,15 @@ ID: NAME:           LAST RUN DATE:        LAST RUN STATUS:    CONFIG:
 456 My second test  2017-02-03 12:34:56   Aborted by user     10 users 5s; 100 users 60s
 ```
 
-By default, it will display all the Tests from all the Projects from all the
-Organizations you have access to. This can be narrowed down by the
-`--project_id` flag:
+By default, it will display the first 20 Tests, ordered by their last run
+date, from all the Projects from all the Organizations you have access to.
+This can be narrowed down by the `--project_id` and the `--limit` flags. For
+example, the following command:
 ```
-$ loadimpact test list --project_id 100 --project_id 200
+$ loadimpact test list --project_id 100 --project_id 200 --limit 5
 ```
+
+Will display the five most recent Tests from projects 100 and 200.
 
 #### Running Tests
 
@@ -275,6 +278,8 @@ $ loadimpact test run 123
 
 TEST_RUN_ID:
 456
+
+'Initializing test ...'
 TIMESTAMP:           VUs [1]: reqs/s [1]: bandwidth [1]: user load time [1]: failure rate [1]:
 2017-01-02 03:04:00  5.0      6.626671    89340.2656     -                   -
 2017-01-02 03:04:03  8.0      3.956092    53336.0410     -                   -
@@ -293,7 +298,7 @@ the `--raw_metric` flag (that allows the passing of parameters for the metrics
 as defined the [in the documentation][api-results] directly):
 
 ```
-$ loadimpact test run 123 --metric bandwidth --raw_metric __li_url_c7cb000532b49c3b1c3f3c1928f74b88:1:225:200:GET
+$ loadimpact test run 123 --metric bandwidth --raw_metric __li_url_XYZ:1:225:200:GET
 ```
 
 Please note that the default metrics (the ones selected by using the

@@ -268,8 +268,7 @@ class TestTestsRun(unittest.TestCase):
 
         # Assertions on the output.
         output = result.output.split('\n')
-        self.assertEqual(len(output), 5)
         # Results table assertions (one row, one metric).
-        self.assertEqual(len(output), 5)
+        self.assertEqual(len(output), 6)
         self.assertEqual(len(output[-2].split('\t')), 6)
         self.assertEqual(output[-2].split('\t')[1], '1.23')

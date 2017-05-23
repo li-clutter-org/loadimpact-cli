@@ -95,9 +95,11 @@ def run_test(test_id, quiet, standard_metrics, raw_metrics):
                            Metric(DefaultMetricType.FAILURE_RATE, ['1'])]
 
             stream = test_run.result_stream([m.str_raw(True) for m in metrics])
+            click.echo('Initializing test ...')
 
-            click.echo(pprint_header(metrics))
-            for data in stream(poll_rate=3):
+            for i, data in enumerate(stream(poll_rate=3)):
+                if i % 20 == 0:
+                    click.echo(pprint_header(metrics))
                 click.echo(pprint_row(data, metrics))
 
     except ConnectionError:
