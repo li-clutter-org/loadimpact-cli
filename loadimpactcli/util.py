@@ -15,8 +15,10 @@ See the License for the specific language governing permissions and
 limitations under the License.
 """
 
-from enum import Enum
+import sys
+
 from click import unstyle
+from enum import Enum
 
 
 class Style(Enum):
@@ -221,5 +223,11 @@ class ColumnFormatter(object):
                 val_ = val_[:width_ - 3] + '...'
 
             return u'{:{width}}'.format(val_, width=width_)
-        return self.separator.join([format_cell(str(val), width)
+
+        if sys.version_info >= (3, 0):
+            decode = str
+        else:
+            decode = unicode
+
+        return self.separator.join([format_cell(decode(val), width)
                                     for width, val in zip(self.widths, args)]).rstrip()
