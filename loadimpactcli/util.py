@@ -218,7 +218,7 @@ class ColumnFormatter(object):
                 return val_
 
             if len(val_) > width_:
-                val_ = val_[:width_-3] + '...'
+                val_ = val_[:width_ - 3] + '...'
 
             return u'{:{width}}'.format(val_, width=width_)
         return self.separator.join([format_cell(unicode(val), width)

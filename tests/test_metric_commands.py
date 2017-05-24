@@ -67,7 +67,7 @@ class TestMetric(unittest.TestCase):
 
         self.assertEqual(client.list_test_run_result_ids.call_count, 1)
         output = result.output.split('\n')
-        self.assertEqual(len(output), 2+3)
+        self.assertEqual(len(output), 2 + 3)
         self.assertEqual(output[1], 'result_id_1_1\t-\ttext_for_type_1')
         self.assertEqual(output[2], 'result_id_1_2\t-\ttext_for_type_1')
         self.assertEqual(output[3], 'result_id_2_1\t-\ttext_for_type_2')
@@ -85,7 +85,7 @@ class TestMetric(unittest.TestCase):
 
         self.assertEqual(client.list_test_run_result_ids.call_count, 1)
         output = result.output.split('\n')
-        self.assertEqual(len(output), 2+3)
+        self.assertEqual(len(output), 2 + 3)
         self.assertEqual(output[1], 'result_id_1_1\t-\ttext_for_type_1')
         self.assertEqual(output[2], 'result_id_1_2\t-\ttext_for_type_1')
         self.assertEqual(output[3], 'result_id_2_1\t-\ttext_for_type_2')

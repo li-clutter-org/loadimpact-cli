@@ -62,7 +62,7 @@ class TestTestsList(unittest.TestCase):
         self.assertEqual(client.list_tests.call_count, 1)
         self.assertEqual(client.get_test_run.call_count, 3)
         output = result.output.split('\n')
-        self.assertEqual(len(output), 2+3)
+        self.assertEqual(len(output), 2 + 3)
         self.assertTrue(output[1].startswith('1\tTest1\t'))
         self.assertTrue(output[2].startswith('2\tTest2\t'))
         self.assertTrue(output[3].startswith('3\tTest3\t'))
@@ -82,7 +82,7 @@ class TestTestsList(unittest.TestCase):
         self.assertEqual(client.list_tests.call_count, 2)
         self.assertEqual(client.get_test_run.call_count, 6)
         output = result.output.split('\n')
-        self.assertEqual(len(output), 2+2*3)
+        self.assertEqual(len(output), 2 + 2 * 3)
 
     def test_list_tests_no_project_id(self):
         """
@@ -102,10 +102,10 @@ class TestTestsList(unittest.TestCase):
 
         self.assertEqual(client.list_organizations.call_count, 1)
         self.assertEqual(client.list_organization_projects.call_count, 2)
-        self.assertEqual(client.list_tests.call_count, 2*2)
-        self.assertEqual(client.get_test_run.call_count, 2*2*3)
+        self.assertEqual(client.list_tests.call_count, 2 * 2)
+        self.assertEqual(client.get_test_run.call_count, 2 * 2 * 3)
         output = result.output.split('\n')
-        self.assertEqual(len(output), 2+2*2*3)
+        self.assertEqual(len(output), 2 + 2 * 2 * 3)
 
     def test_list_tests_limit_not_hit(self):
         """
@@ -123,7 +123,7 @@ class TestTestsList(unittest.TestCase):
         self.assertEqual(client.list_tests.call_count, 1)
         self.assertEqual(client.get_test_run.call_count, 3)
         output = result.output.split('\n')
-        self.assertEqual(len(output), 2+3)
+        self.assertEqual(len(output), 2 + 3)
 
         # Invokation with flag: limit is 1, 1 test listed, extra line.
         client.list_tests.reset_mock()
@@ -134,7 +134,7 @@ class TestTestsList(unittest.TestCase):
         self.assertEqual(client.list_tests.call_count, 1)
         self.assertEqual(client.get_test_run.call_count, 1)
         output = result.output.split('\n')
-        self.assertEqual(len(output), 2+1+1)
+        self.assertEqual(len(output), 2 + 1 + 1)
 
     def test_summarize_valid_config(self):
         config = {u'new_relic_applications': [],
@@ -143,13 +143,11 @@ class TestTestsList(unittest.TestCase):
                   u'server_metric_agents': [],
                   u'tracks': [
                       {u'clips': [{u'user_scenario_id': 225, u'percent': 100}],
-                       u'loadzone': u'amazon:ie:dublin'}
-                  ],
+                       u'loadzone': u'amazon:ie:dublin'}],
                   u'url_groups': [],
                   u'load_schedule': [
                       {u'duration': 1, u'users': 50},
-                      {u'duration': 2, u'users': 100}
-                  ],
+                      {u'duration': 2, u'users': 100}],
                   u'source_ips': 0}
         summary = test_commands.summarize_config(config)
         self.assertEqual(summary, '50 users 1s; 100 users 2s')

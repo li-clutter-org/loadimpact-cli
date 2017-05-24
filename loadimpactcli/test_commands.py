@@ -136,11 +136,11 @@ def get_run_test_formatter(full_width, metrics):
     the `test list` command.
     """
     if full_width:
-        return ColumnFormatter([0] * (len(metrics)+1), '\t')
+        return ColumnFormatter([0] * (len(metrics) + 1), '\t')
     else:
         # Setup the formatter using sensible column widths for each field.
         column_widths = (25,  # timestamp (YYYY-MM-DD HH:mm:ss+ZZ:zz)
-                         ) + tuple(max(16, len(m.str_ui(True))+1) for m in metrics)
+                         ) + tuple(max(16, len(m.str_ui(True)) + 1) for m in metrics)
 
         return ColumnFormatter(column_widths, ' ')
 
