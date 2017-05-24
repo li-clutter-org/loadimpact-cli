@@ -25,7 +25,7 @@ from datetime import datetime
 
 from click.testing import CliRunner
 from loadimpactcli import test_commands
-from loadimpactcli.util import Metric
+from loadimpactcli.util import Metric, ColumnFormatter
 
 try:
     from unittest.mock import MagicMock
@@ -165,7 +165,8 @@ class TestTestsRun(unittest.TestCase):
         self.runner = CliRunner()
 
     def _assertMetricHeader(self, string, metrics):
-        self.assertEqual(test_commands.pprint_header(metrics),
+        formatter = test_commands.get_run_test_formatter(True, metrics)
+        self.assertEqual(test_commands.pprint_header(formatter, metrics),
                          u'TIMESTAMP:\t{0}'.format(string))
 
     def test_ui_header(self):
@@ -199,21 +200,22 @@ class TestTestsRun(unittest.TestCase):
                    Metric.from_raw(u'foöbår:1')]
 
         # No results returned.
+        formatter = test_commands.get_run_test_formatter(True, metrics)
         data = {}
-        self.assertEqual(test_commands.pprint_row(data, metrics), '')
+        self.assertEqual(test_commands.pprint_row(formatter, data, metrics), '')
 
         # Only timestamp (not one of the requested metrics) returned.
         data = {'somerandomkey': StreamData(datetime.now(), 1)}
-        self.assertEqual(test_commands.pprint_row(data, metrics).split('\t', 1)[1], u'-\t-')
+        self.assertEqual(test_commands.pprint_row(formatter, data, metrics).split('\t', 1)[1], u'-\t-')
 
         # Data returned for one metric.
         data = {metrics[0].str_raw(True): StreamData(datetime.now(), 123)}
-        self.assertEqual(test_commands.pprint_row(data, metrics).split('\t', 1)[1], u'123\t-')
+        self.assertEqual(test_commands.pprint_row(formatter, data, metrics).split('\t', 1)[1], u'123\t-')
 
         # Data returned for both metrics.
         data = {metrics[0].str_raw(True): StreamData(datetime.now(), 123),
                 metrics[1].str_raw(True): StreamData(datetime.now(), 'xyz')}
-        self.assertEqual(test_commands.pprint_row(data, metrics).split('\t', 1)[1], u'123\txyz')
+        self.assertEqual(test_commands.pprint_row(formatter, data, metrics).split('\t', 1)[1], u'123\txyz')
 
     def test_run_no_streaming(self):
         """
@@ -259,7 +261,7 @@ class TestTestsRun(unittest.TestCase):
         test = MockedTest(1, 'Test1', 10001, '', test_run)
         client.get_test = MagicMock(return_value=test)
 
-        result = self.runner.invoke(test_commands.run_test, ['1'])
+        result = self.runner.invoke(test_commands.run_test, ['1', '--full_width'])
 
         # Client and test methods have been called.
         self.assertEqual(client.get_test.call_count, 1)

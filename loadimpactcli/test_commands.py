@@ -48,17 +48,7 @@ def list_tests(project_ids, display_limit, full_width):
             tests.extend(client.list_tests(project_id=id_))
 
         # Output formatting.
-        if full_width:
-            formatter = ColumnFormatter([0]*5, '\t')
-        else:
-            # Setup the formatter using sensible column widths for each field.
-            column_widths = (max(len('ID:'), max([len(str(t.id)) for t in tests])),
-                             32,  # width for test name (arbitrary)
-                             25,  # last run date (YYYY-MM-DD HH:mm:ss+ZZ:zz)
-                             22,  # len('Aborted (by threshold)')
-                             64   # width for configuration (arbitrary)
-                             )
-            formatter = ColumnFormatter(column_widths, ' ')
+        formatter = get_list_tests_formatter(full_width, tests)
         click.echo(formatter.format('ID:', 'NAME:', 'LAST RUN DATE:', 'LAST RUN STATUS:', 'CONFIG:'))
 
         # Display the tests sorted by descending test_run ID, and limit the
@@ -89,7 +79,8 @@ def list_tests(project_ids, display_limit, full_width):
               help='Name of the standard metric to stream (implies aggregated world load zone).',
               type=click.Choice([m.name.lower() for m in list(DefaultMetricType)]))
 @click.option('--raw_metric', 'raw_metrics', multiple=True, help='Raw name of the metric to stream.')
-def run_test(test_id, quiet, standard_metrics, raw_metrics):
+@click.option('--full_width', 'full_width', is_flag=True, help='Display the full contents of each column.')
+def run_test(test_id, quiet, standard_metrics, raw_metrics, full_width):
     try:
         test_ = client.get_test(test_id)
         test_run = test_.start_test_run()
@@ -106,27 +97,63 @@ def run_test(test_id, quiet, standard_metrics, raw_metrics):
                            Metric(DefaultMetricType.USER_LOAD_TIME, ['1']),
                            Metric(DefaultMetricType.FAILURE_RATE, ['1'])]
 
+            # Output formatting.
+            formatter = get_run_test_formatter(full_width, metrics)
+
             stream = test_run.result_stream([m.str_raw(True) for m in metrics])
             click.echo('Initializing test ...')
 
             for i, data in enumerate(stream(poll_rate=3)):
                 if i % 20 == 0:
-                    click.echo(pprint_header(metrics))
-                click.echo(pprint_row(data, metrics))
+                    click.echo(pprint_header(formatter, metrics))
+                click.echo(pprint_row(formatter, data, metrics))
 
     except ConnectionError:
         click.echo("Cannot connect to Load impact API")
 
 
-def pprint_header(returned_metrics):
+def get_list_tests_formatter(full_width, tests):
+    """
+    Returns a `ColumnFormatter` with sensible values for the column widths for
+    the `tests list` command.
+    """
+    if full_width:
+        return ColumnFormatter([0] * 5, '\t')
+    else:
+        # Setup the formatter using sensible column widths for each field.
+        column_widths = (max(len('ID:'), max([len(str(t.id)) for t in tests])),
+                         32,  # width for test name (arbitrary)
+                         25,  # last run date (YYYY-MM-DD HH:mm:ss+ZZ:zz)
+                         22,  # len('Aborted (by threshold)')
+                         64  # width for configuration (arbitrary)
+                         )
+        return ColumnFormatter(column_widths, ' ')
+
+
+def get_run_test_formatter(full_width, metrics):
+    """
+    Returns a `ColumnFormatter` with sensible values for the column widths for
+    the `test list` command.
+    """
+    if full_width:
+        return ColumnFormatter([0] * (len(metrics)+1), '\t')
+    else:
+        # Setup the formatter using sensible column widths for each field.
+        column_widths = (25,  # timestamp (YYYY-MM-DD HH:mm:ss+ZZ:zz)
+                         ) + tuple(max(16, len(m.str_ui(True))+1) for m in metrics)
+
+        return ColumnFormatter(column_widths, ' ')
+
+
+def pprint_header(formatter, returned_metrics):
     """
     Return a pretty printed string with the header of the metric streaming
     output, consisting of the name of the metrics including the parameters.
     """
-    return u'\t'.join([u'TIMESTAMP:'] + [u'{0}:'.format(m.str_ui(True)) for m in returned_metrics])
+    return formatter.format(*([u'TIMESTAMP:'] + [u'{0}:'.format(m.str_ui(True)) for m in returned_metrics]))
 
 
-def pprint_row(data, returned_metrics):
+def pprint_row(formatter, data, returned_metrics):
     """
     Return a pretty printed string with a row of the metric streaming
     output, consisting of the values of the metrics.
@@ -142,7 +169,7 @@ def pprint_row(data, returned_metrics):
         except KeyError:
             parts.append(u'-')
 
-    return u'\t'.join(parts)
+    return formatter.format(*parts)
 
 
 def summarize_config(config):

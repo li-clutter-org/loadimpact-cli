@@ -262,11 +262,10 @@ $ loadimpact test list --project_id 100 --project_id 200 --limit 5
 
 Will display the five most recent Tests from projects 100 and 200.
 
-The command truncates the values of several columns (*Name* and *Config*) for
+The output truncates the values of several columns (*Name* and *Config*) for
 the purposes of readability. This can be overriden by the `--full-width`
 argument, which will cause the information to be displayed fully and separated
 by tab characters (`\t`).
-
 
 #### Running Tests
 
@@ -310,6 +309,11 @@ $ loadimpact test run 123 --metric bandwidth --raw_metric __li_url_XYZ:1:225:200
 Please note that the default metrics (the ones selected by using the
 `--metric` flag) will by default display the first aggregation function for
 the aggregated world load zone.
+
+The output displays the values using fixed width, truncating if needed, for
+the purposes of readability. This can be overriden by the `--full-width`
+argument, which will cause the information to be displayed fully and separated
+by tab characters (`\t`).
 
 ## Working with Metrics
 
