@@ -262,6 +262,12 @@ $ loadimpact test list --project_id 100 --project_id 200 --limit 5
 
 Will display the five most recent Tests from projects 100 and 200.
 
+The command truncates the values of several columns (*Name* and *Config*) for
+the purposes of readability. This can be overriden by the `--full-width`
+argument, which will cause the information to be displayed fully and separated
+by tab characters (`\t`).
+
+
 #### Running Tests
 
 The `test run` command launches a Test Run from an existing Test:

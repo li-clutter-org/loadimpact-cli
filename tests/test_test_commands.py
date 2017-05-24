@@ -57,7 +57,7 @@ class TestTestsList(unittest.TestCase):
         # Setup mockers.
         client.list_tests = MagicMock(return_value=self.tests)
         client.get_test_run = MagicMock(return_value=TestRun(1, datetime.now(), 0, 'status'))
-        result = self.runner.invoke(test_commands.list_tests, ['--project_id', '1'])
+        result = self.runner.invoke(test_commands.list_tests, ['--project_id', '1', '--full_width'])
 
         self.assertEqual(client.list_tests.call_count, 1)
         self.assertEqual(client.get_test_run.call_count, 3)

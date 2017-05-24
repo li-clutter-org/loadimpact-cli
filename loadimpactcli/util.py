@@ -16,6 +16,7 @@ limitations under the License.
 """
 
 from enum import Enum
+from click import unstyle
 
 
 class Style(Enum):
@@ -176,3 +177,49 @@ class Metric(object):
 
     def __eq__(self, other):
             return self.metric_type == other.metric_type and self.params == other.params
+
+
+class ColumnFormatter(object):
+    """
+    Helper class for formatting text into columns with fixed width.
+    """
+    def __init__(self, widths, separator):
+        """
+        :param widths: list with the width (in chars) of each column. A value
+        of 0 is used for specifying unlimited width (ie. that column will not
+        be processed and the value will be printed as-is).
+        :param separator: string used as a separator between columns.
+        """
+        self.widths = widths
+        self.separator = separator
+
+    def format(self, *args):
+        """
+        Return a string that contains `args` formatted by columns, with each
+        column having the width specified by `self.widths` and separated by
+        `separator`. The values are truncated (replacing the 3 last characters
+        by '...') if needed. For example:
+            > f = ColumnFormatter(widths=(8,10,4), separator='|')
+            > output = f.format('0123456789','0123456789','abc')
+            > output == '01234...|0123456789|abc '
+
+        Note that `Click.style()`-d strings (using ANSII character codes) are
+        not processed at all.
+
+        :param args: list of strings, one for each column. Note that the
+        number of arguments should match the number of items on the self.width
+        attribute.
+        :return: a string with the resulting row
+        """
+        def format_cell(val_, width_):
+            if len(val_) != len(unstyle(val_)) or width_ == 0:
+                # For styled strings, assume they have been already prepared.
+                # For width == 0, ignore formatting completely.
+                return val_
+
+            if len(val_) > width_:
+                val_ = val_[:width_-3] + '...'
+
+            return u'{:{width}}'.format(val_, width=width_)
+        return self.separator.join([format_cell(unicode(val), width)
+                                    for width, val in zip(self.widths, args)]).rstrip()

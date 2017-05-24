@@ -20,7 +20,7 @@ import click
 
 from loadimpact3.exceptions import ConnectionError
 from .client import client
-from .util import TestRunStatus, Metric, DefaultMetricType
+from .util import TestRunStatus, Metric, DefaultMetricType, ColumnFormatter
 
 
 @click.group()
@@ -32,7 +32,8 @@ def test(ctx):
 @test.command('list', short_help='List tests.')
 @click.option('--project_id', 'project_ids', multiple=True, help='Id of the project to list tests from.')
 @click.option('--limit', 'display_limit', default=20, help='Maximum number of tests to display.')
-def list_tests(project_ids, display_limit):
+@click.option('--full_width', 'full_width', is_flag=True, help='Display the full contents of each column.')
+def list_tests(project_ids, display_limit, full_width):
     try:
         if not project_ids:
             # If no project_id is specified, retrieve all projects the user has access to.
@@ -46,7 +47,19 @@ def list_tests(project_ids, display_limit):
         for id_ in set(project_ids):
             tests.extend(client.list_tests(project_id=id_))
 
-        click.echo("ID:\tNAME:\tLAST RUN DATE:\tLAST RUN STATUS:\tCONFIG:")
+        # Output formatting.
+        if full_width:
+            formatter = ColumnFormatter([0]*5, '\t')
+        else:
+            # Setup the formatter using sensible column widths for each field.
+            column_widths = (max(len('ID:'), max([len(str(t.id)) for t in tests])),
+                             32,  # width for test name (arbitrary)
+                             25,  # last run date (YYYY-MM-DD HH:mm:ss+ZZ:zz)
+                             22,  # len('Aborted (by threshold)')
+                             64   # width for configuration (arbitrary)
+                             )
+            formatter = ColumnFormatter(column_widths, ' ')
+        click.echo(formatter.format('ID:', 'NAME:', 'LAST RUN DATE:', 'LAST RUN STATUS:', 'CONFIG:'))
 
         # Display the tests sorted by descending test_run ID, and limit the
         # list according to the display_limit argument.
@@ -56,12 +69,11 @@ def list_tests(project_ids, display_limit):
             if test_.last_test_run_id:
                 last_run = client.get_test_run(test_.last_test_run_id)
                 last_run_date = last_run.queued
-                last_run_status = click.style(last_run.status_text,
-                                              fg=TestRunStatus(last_run.status).style.value)
+                last_run_status_text = last_run.status_text if full_width else '{:22}'.format(last_run.status_text)
+                last_run_status = click.style(last_run_status_text, fg=TestRunStatus(last_run.status).style.value)
 
-            click.echo(u'{0}\t{1}\t{2}\t{3}\t{4}'.format(
-                test_.id, test_.name, last_run_date, last_run_status,
-                summarize_config(test_.config)))
+            click.echo(formatter.format(test_.id, test_.name, last_run_date, last_run_status,
+                                        summarize_config(test_.config)))
 
         if len(tests) > display_limit:
             click.echo("Only the first {0} tests (out of {1}) are displayed. This behaviour can be"
