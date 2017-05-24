@@ -221,5 +221,5 @@ class ColumnFormatter(object):
                 val_ = val_[:width_ - 3] + '...'
 
             return u'{:{width}}'.format(val_, width=width_)
-        return self.separator.join([format_cell(unicode(val), width)
+        return self.separator.join([format_cell(str(val), width)
                                     for width, val in zip(self.widths, args)]).rstrip()
