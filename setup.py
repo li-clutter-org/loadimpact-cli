@@ -40,7 +40,8 @@ setup(
         'loadimpact-v3',
         'tzlocal',
         'six',
-        'mock'
+        'mock',
+        'enum34'
     ],
     test_requires=['coverage'],
     entry_points={

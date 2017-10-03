@@ -20,6 +20,8 @@ import click
 from .userscenario_commands import userscenario
 from .organization_commands import organization
 from .datastore_commands import data_store
+from .test_commands import test
+from .metric_commands import metric
 from .version import __version__
 
 
@@ -34,6 +36,8 @@ def run_cli():
     cli.add_command(userscenario)
     cli.add_command(organization)
     cli.add_command(data_store)
+    cli.add_command(test)
+    cli.add_command(metric)
     cli()
 
 if __name__ == '__main__':

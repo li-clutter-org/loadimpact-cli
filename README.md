@@ -80,14 +80,18 @@ $ loadimpact
 Usage: loadimpact [OPTIONS] COMMAND [ARGS]...
 
 Options:
-  --help  Show this message and exit.
   --version  Show the version and exit.
+  --help     Show this message and exit.
 
 Commands:
-  organization
-  user-scenario
   data-store
+  metric
+  organization
+  test
+  user-scenario
 ```
+
+## Working with organizations and projects
 
 #### Listing organizations
 
@@ -235,6 +239,109 @@ The ```data-store update``` command will update the file of the specified Data s
 $ loadimpact data-store update 1 /path/to/file.csv
 ```
 
+## Working with Tests
+
+#### Listing Tests
+
+The `test list` command lists the Tests you have access to:
+```
+$ loadimpact test list
+
+ID: NAME:           LAST RUN DATE:        LAST RUN STATUS:    CONFIG:
+123 My test name    2017-01-02 03:04:05   Finished            50 users 2s
+456 My second test  2017-02-03 12:34:56   Aborted by user     10 users 5s; 100 users 60s
+```
+
+By default, it will display the first 20 Tests, ordered by their last run
+date, from all the Projects from all the Organizations you have access to.
+This can be narrowed down by the `--project_id` and the `--limit` flags. For
+example, the following command:
+```
+$ loadimpact test list --project_id 100 --project_id 200 --limit 5
+```
+
+Will display the five most recent Tests from projects 100 and 200.
+
+The output truncates the values of several columns (*Name* and *Config*) for
+the purposes of readability. This can be overriden by the `--full-width`
+argument, which will cause the information to be displayed fully and separated
+by tab characters (`\t`).
+
+#### Running Tests
+
+The `test run` command launches a Test Run from an existing Test:
+```
+$ loadimpact test run 123
+```
+
+The command will periodically print the metrics collected during the test run
+(defaulting to VUs, requests/second, bandwidth, VU load time and failure rate)
+until the test run is finished:
+
+```
+$ loadimpact test run 123
+
+TEST_RUN_ID:
+456
+
+'Initializing test ...'
+TIMESTAMP:           VUs [1]: reqs/s [1]: bandwidth [1]: user load time [1]: failure rate [1]:
+2017-01-02 03:04:00  5.0      6.626671    89340.2656     -                   -
+2017-01-02 03:04:03  8.0      3.956092    53336.0410     -                   -
+2017-01-02 03:04:06  10.0     2.644981    35659.6385     -                   -
+2017-01-02 03:04:09  15.0     3.970042    53524.1070     -                   -
+2017-01-02 03:04:12  17.0     2.646911    35685.6541     -                   -
+2017-01-02 03:04:15  20.0     3.969141    53511.9623     -                   -
+2017-01-02 03:04:18  22.0     6.613472    89162.8336     235.73              -
+2017-01-02 03:04:21  25.0     5.289569    71313.9719     234.3               -
+...
+```
+
+This output can be disabled by the `--quiet` flag. The metrics displayed can
+also be selected using the `--metric` flag (in the case of default metrics) or
+the `--raw_metric` flag (that allows the passing of parameters for the metrics
+as defined the [in the documentation][api-results] directly):
+
+```
+$ loadimpact test run 123 --metric bandwidth --raw_metric __li_url_XYZ:1:225:200:GET
+```
+
+Please note that the default metrics (the ones selected by using the
+`--metric` flag) will by default display the first aggregation function for
+the aggregated world load zone.
+
+The output displays the values using fixed width, truncating if needed, for
+the purposes of readability. This can be overriden by the `--full-width`
+argument, which will cause the information to be displayed fully and separated
+by tab characters (`\t`).
+
+## Working with Metrics
+
+#### Listing Metrics
+
+The `metric list` command lists the Metrics available for a Test Run:
+```
+$ loadimpact metric list 789
+
+NAME:                                                    ARGUMENT NAME:  TYPE:
+__li_bandwidth:1                                         bandwidth       common
+__li_bandwidth:13                                        bandwidth       common
+__li_clients_active:1                                    clients_active  common
+__li_clients_active:13                                   clients_active  common
+__li_user_load_time:1                                    user_load_time  common
+__li_user_load_time:13                                   user_load_time  common
+__li_url_69e369c64ef5e40f6fd8566e4163860d:13:225:200:GET -               url
+__li_url_69e369c64ef5e40f6fd8566e4163860d:1:225:200:GET  -               url
+...
+```
+
+The list of metrics to output can be narrowed down by metric type by using the
+`--type` flag:
+
+```
+$ loadimpact metric list 789 --type common --type log
+```
+
 ## Contribute!
 
 If you wan't to contribute, please check out the repository and install the dependencys in a virtualenv using pip. The tests can be run with ```setup.py```
@@ -245,3 +352,5 @@ $ python setup.py test
 ```
 
 If you've found a bug or something isn't working properly, please don't hesitate to create a ticket for us! 
+
+[api-results]: http://developers.loadimpact.com/api/#get-tests-id-results
