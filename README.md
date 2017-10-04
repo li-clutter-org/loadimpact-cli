@@ -3,6 +3,8 @@
 This is the Command line interface for Load Impact API version 3. The CLI can perform the following operations:
 - user scenarios: listing, creating, retrieving, validating, updating, deleting
 - data stores: listing, downloading, creating
+- tests: listing, running
+- metrics: list
 - For all other use cases, reference the REST API at http://developer.loadimpact.com/api/index.html
 
 This CLI is still in BETA so we are still hunting bugs, adding features and changing things.
