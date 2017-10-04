@@ -1,5 +1,9 @@
 # Changelog
 
+## v1.1.1 (2017-10-04)
+
+- Update requirements of dependency loadimpact-v3
+
 ## v1.1.0 (2017-10-04)
 
 - Add support for listing and running tests
