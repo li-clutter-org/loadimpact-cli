@@ -1,21 +1,26 @@
 # Changelog
 
-## v1.0.0 (2016-03-09)
+## v1.1.0 (2017-10-04)
 
-First BETA release.
+- Add support for listing and running tests
+- Add support for listing metrics of a test run
 
-## v1.0.1 (2016-03-10)
+## v1.0.4 (2016-03-21)
 
-Fixes to setup.py
-
-## v1.0.2 (2016-03-10)
-
-Fixes to running tests.
+More fixes to configs.
 
 ## v1.0.3 (2016-03-21)
 
 Fixes to configs
 
-## v1.0.4 (2016-03-21)
+## v1.0.2 (2016-03-10)
 
-More fixes to configs.
+Fixes to running tests.
+
+## v1.0.1 (2016-03-10)
+
+Fixes to setup.py
+
+## v1.0.0 (2016-03-09)
+
+First BETA release.
