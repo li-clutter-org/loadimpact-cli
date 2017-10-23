@@ -317,6 +317,11 @@ the purposes of readability. This can be overriden by the `--full-width`
 argument, which will cause the information to be displayed fully and separated
 by tab characters (`\t`).
 
+If the test run finishes with a failure status then the CLI will exit with a
+non-zero exit code. This is helpful in combination with [thresholds](http://support.loadimpact.com/knowledgebase/articles/918699-thresholds)
+when using the CLI in an automation pipeline using tools and services like
+Jenkins, CircleCI, TeamCity etc.
+
 ## Working with Metrics
 
 #### Listing Metrics
