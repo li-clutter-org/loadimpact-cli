@@ -17,7 +17,9 @@ limitations under the License.
 from operator import attrgetter, methodcaller
 
 import click
+import sys
 
+from loadimpact3.resources import TestRun
 from loadimpact3.exceptions import ConnectionError
 from .client import client
 from .util import TestRunStatus, Metric, DefaultMetricType, ColumnFormatter
@@ -108,8 +110,13 @@ def run_test(test_id, quiet, standard_metrics, raw_metrics, full_width):
                     click.echo(pprint_header(formatter, metrics))
                 click.echo(pprint_row(formatter, data, metrics))
 
+        if test_run.status in [TestRun.STATUS_ABORTED_SYSTEM, TestRun.STATUS_ABORTED_SCRIPT_ERROR,
+                               TestRun.STATUS_FAILED_THRESHOLD, TestRun.STATUS_ABORTED_THRESHOLD]:
+            sys.exit(test_run.status)  # We return status as exit code
+
     except ConnectionError:
         click.echo("Cannot connect to Load impact API")
+        sys.exit(1)
 
 
 def get_list_tests_formatter(full_width, tests):
