@@ -1,5 +1,9 @@
 # Changelog
 
+## v1.2.0 (2017-10-23)
+
+- CLI will exit with non-zero exit code if test run (`loadimpact test run ...`) finishes with failure status
+
 ## v1.1.1 (2017-10-04)
 
 - Update requirements of dependency loadimpact-v3
