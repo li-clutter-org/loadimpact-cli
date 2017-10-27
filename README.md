@@ -71,7 +71,7 @@ Optionally, if you don't want to edit the config-file you can set default projec
 
 
 ```
-export LOADIMPACT_API_TOKEN='your_api_token'
+export LOADIMPACT_API_V3_TOKEN='your_api_token'
 export LOADIMPACT_DEFAULT_PROJECT=1
 ```
 
