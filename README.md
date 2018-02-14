@@ -7,8 +7,6 @@ This is the Command line interface for Load Impact API version 3. The CLI can pe
 - metrics: list
 - For all other use cases, reference the REST API at http://developer.loadimpact.com/api/index.html
 
-This CLI is still in BETA so we are still hunting bugs, adding features and changing things.
-
 ## Install
 
 [![PyPI](https://img.shields.io/pypi/v/loadimpact-cli.svg)](https://pypi.python.org/pypi/loadimpact-cli) [![PyPI](https://img.shields.io/pypi/dm/loadimpact-cli.svg)](https://pypi.python.org/pypi/loadimpact-cli)
@@ -71,7 +69,7 @@ Optionally, if you don't want to edit the config-file you can set default projec
 
 
 ```
-export LOADIMPACT_API_TOKEN='your_api_token'
+export LOADIMPACT_API_V3_TOKEN='your_api_token'
 export LOADIMPACT_DEFAULT_PROJECT=1
 ```
 
