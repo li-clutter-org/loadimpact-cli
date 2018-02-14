@@ -90,31 +90,35 @@ def run_test(test_id, no_ignore_errors, quiet, standard_metrics, raw_metrics, fu
         test_run = test_.start_test_run()
         click.echo('TEST_RUN_ID:\n{0}'.format(test_run.id))
 
-        if not quiet:
-            # Prepare metrics.
-            metrics = sorted([Metric.from_raw(m) for m in standard_metrics + raw_metrics],
-                             key=methodcaller('str_raw', True))
-            if not metrics:
-                metrics = [Metric(DefaultMetricType.CLIENTS_ACTIVE, ['1']),
-                           Metric(DefaultMetricType.REQUESTS_PER_SECOND, ['1']),
-                           Metric(DefaultMetricType.BANDWIDTH, ['1']),
-                           Metric(DefaultMetricType.USER_LOAD_TIME, ['1']),
-                           Metric(DefaultMetricType.FAILURE_RATE, ['1'])]
+        try:
+            if not quiet:
+                # Prepare metrics.
+                metrics = sorted([Metric.from_raw(m) for m in standard_metrics + raw_metrics],
+                                 key=methodcaller('str_raw', True))
+                if not metrics:
+                    metrics = [Metric(DefaultMetricType.CLIENTS_ACTIVE, ['1']),
+                               Metric(DefaultMetricType.REQUESTS_PER_SECOND, ['1']),
+                               Metric(DefaultMetricType.BANDWIDTH, ['1']),
+                               Metric(DefaultMetricType.USER_LOAD_TIME, ['1']),
+                               Metric(DefaultMetricType.FAILURE_RATE, ['1'])]
 
-            # Output formatting.
-            formatter = get_run_test_formatter(full_width, metrics)
+                # Output formatting.
+                formatter = get_run_test_formatter(full_width, metrics)
 
-            stream = test_run.result_stream([m.str_raw(True) for m in metrics], raise_api_errors=no_ignore_errors)
-            click.echo('Initializing test ...')
+                stream = test_run.result_stream([m.str_raw(True) for m in metrics], raise_api_errors=no_ignore_errors)
+                click.echo('Initializing test ...')
 
-            for i, data in enumerate(stream(poll_rate=3)):
-                if i % 20 == 0:
-                    click.echo(pprint_header(formatter, metrics))
-                click.echo(pprint_row(formatter, data, metrics))
+                for i, data in enumerate(stream(poll_rate=3)):
+                    if i % 20 == 0:
+                        click.echo(pprint_header(formatter, metrics))
+                    click.echo(pprint_row(formatter, data, metrics))
 
-        if test_run.status in [TestRun.STATUS_ABORTED_SYSTEM, TestRun.STATUS_ABORTED_SCRIPT_ERROR,
-                               TestRun.STATUS_FAILED_THRESHOLD, TestRun.STATUS_ABORTED_THRESHOLD]:
-            sys.exit(test_run.status)  # We return status as exit code
+            if test_run.status in [TestRun.STATUS_ABORTED_SYSTEM, TestRun.STATUS_ABORTED_SCRIPT_ERROR,
+                                   TestRun.STATUS_FAILED_THRESHOLD, TestRun.STATUS_ABORTED_THRESHOLD]:
+                sys.exit(test_run.status)  # We return status as exit code
+        except KeyboardInterrupt:
+            click.echo("Aborting test run!")
+            test_run.abort()
 
     except ConnectionError:
         click.echo("Cannot connect to Load impact API")
