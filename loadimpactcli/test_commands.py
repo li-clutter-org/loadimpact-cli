@@ -76,7 +76,7 @@ def list_tests(project_ids, display_limit, full_width):
 
 @test.command('run', short_help='Run a test.')
 @click.argument('test_id')
-@click.option('--no-ignore-errors', default=False,
+@click.option('--no-ignore-errors', is_flag=True, default=False,
               help='Print any errors returned by API while streaming results.')
 @click.option('--quiet/--no-quiet', default=False, help='Disable streaming of metrics to stdout.')
 @click.option('--metric', 'standard_metrics', multiple=True,
