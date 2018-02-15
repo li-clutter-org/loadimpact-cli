@@ -1,5 +1,9 @@
 # Changelog
 
+## v1.2.2 (2018-02-15)
+
+- Bump version of Load Impact SDK dependency that includes some fixes
+
 ## v1.2.1 (2018-02-14)
 
 - When running test, pressing Ctrl+C will now abort the test run
