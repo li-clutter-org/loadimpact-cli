@@ -138,7 +138,7 @@ You also need to specify the path to the script file you want to create the User
 
 
 ```
-$ loadimpact user-scenario create 'script name' /path/to/script.lua --project_id=1
+$ loadimpact user-scenario create /path/to/script.lua 'script name' --project_id=1
 
 
 ```
@@ -150,7 +150,7 @@ $ loadimpact data-store list
 ID: NAME:
 43  Load Impact Basic
 23  Fake Customers
-$ loadimpact user-scenario create 'script name' /path/to/script.lua --project_id=1 --datastore_id=43
+$ loadimpact user-scenario create /path/to/script.lua 'script name' --project_id=1 --datastore_id=43
 
 
 ```
@@ -158,7 +158,7 @@ $ loadimpact user-scenario create 'script name' /path/to/script.lua --project_id
 Or you can add a new Data store file using ```--datastore_file```,  this will create a new Data store in the project and add it to the User scenario. 
 
 ```
-$ loadimpact user-scenario create 'script name' /path/to/script.lua --project_id=1 --datastore_file=/path/to/datastore.csv
+$ loadimpact user-scenario create /path/to/script.lua 'script name' --project_id=1 --datastore_file=/path/to/datastore.csv
 
 ```
 
