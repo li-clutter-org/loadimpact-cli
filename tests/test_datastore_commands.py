@@ -128,7 +128,7 @@ class TestDataStores(unittest.TestCase):
         assert result.exit_code == 2
 
     def test_delete_datastore(self):
-        datastore_commands.delete_datastore = MagicMock(return_value="Datastore1")
+        datastore_commands.delete_store = MagicMock(return_value="Datastore1")
         result = self.runner.invoke(datastore_commands.delete_datastore, ['1', '--yes'])
         assert result.exit_code == 0
         assert result.output == 'Datastore1\n'

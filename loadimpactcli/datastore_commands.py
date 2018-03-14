@@ -128,7 +128,7 @@ def update_datastore(id, datastore_file, name, project_id, delimiter, separator,
 @click.argument('datastore_id')
 def delete_datastore(datastore_id):
     try:
-        click.echo(delete_datastore(datastore_id))
+        click.echo(delete_store(datastore_id))
     except ConnectionError:
         click.echo("Cannot connect to Load impact API")
 
@@ -147,6 +147,6 @@ def _download_csv(user_scenario, file_path):
             shutil.copyfileobj(response.raw, f)
 
 
-def delete_datastore(datastore_id):
+def delete_store(datastore_id):
     datastore = client.get_data_store(datastore_id)
     return datastore.delete()
