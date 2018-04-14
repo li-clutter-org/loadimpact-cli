@@ -123,6 +123,16 @@ def update_datastore(id, datastore_file, name, project_id, delimiter, separator,
         click.echo("Cannot connect to Load impact API")
 
 
+@data_store.command('delete', short_help='Delete data-store.')
+@click.confirmation_option(help='Are you sure you want to delete the data-store?')
+@click.argument('datastore_id')
+def delete_datastore(datastore_id):
+    try:
+        click.echo(delete_store(datastore_id))
+    except ConnectionError:
+        click.echo("Cannot connect to Load impact API")
+
+
 def _wait_for_conversion(data_store):
     while not data_store.has_conversion_finished():
         sleep(3)
@@ -135,3 +145,8 @@ def _download_csv(user_scenario, file_path):
         with open(file_path, 'wb') as f:
             response.raw.decode_content = True
             shutil.copyfileobj(response.raw, f)
+
+
+def delete_store(datastore_id):
+    datastore = client.get_data_store(datastore_id)
+    return datastore.delete()

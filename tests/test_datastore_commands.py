@@ -126,3 +126,13 @@ class TestDataStores(unittest.TestCase):
 
         result = self.runner.invoke(datastore_commands.update_datastore, ['1'])
         assert result.exit_code == 2
+
+    def test_delete_datastore(self):
+        datastore_commands.delete_store = MagicMock(return_value="Datastore1")
+        result = self.runner.invoke(datastore_commands.delete_datastore, ['1', '--yes'])
+        assert result.exit_code == 0
+        assert result.output == 'Datastore1\n'
+
+    def test_delete_datastore_no_params(self):
+        result = self.runner.invoke(datastore_commands.delete_datastore, [])
+        assert result.exit_code == 2

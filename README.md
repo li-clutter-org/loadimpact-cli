@@ -239,6 +239,21 @@ The ```data-store update``` command will update the file of the specified Data s
 $ loadimpact data-store update 1 /path/to/file.csv
 ```
 
+#### Deleting a Data store
+
+The ```data-store delete``` command will delete an existing Data store. Since this is a destructive action you'll need to verify it. 
+
+```
+$ loadimpact data-store delete 1
+
+```
+If you need to bypass the verifying you can add the ```--yes``` flag. 
+
+```
+$ loadimpact data-store delete 1 --yes
+
+```
+
 ## Working with Tests
 
 #### Listing Tests
