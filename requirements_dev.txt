@@ -1,2 +1,5 @@
 pytest==2.8.7
 mock==1.3.0
+
+# code style tests
+pycodestyle==2.4.0
