@@ -1,6 +1,8 @@
 # Load Impact CLI [![Build Status](https://travis-ci.org/loadimpact/loadimpact-cli.png?branch=master,develop)](https://travis-ci.org/loadimpact/loadimpact-cli) [![Coverage Status](https://coveralls.io/repos/loadimpact/loadimpact-cli/badge.svg?branch=develop&service=github)](https://coveralls.io/github/loadimpact/loadimpact-cli?branch=develop)
 
-This is the Command line interface for Load Impact API version 3. The CLI can perform the following operations:
+This is the Command line interface for Load Impact API version 3 and Load Impact Version 3.0 (Lua based scripting). If you are looking for the CLI for version 4.0, please refer to the [k6 github repo.](https://github.com/loadimpact/k6)
+
+The CLI can perform the following operations:
 - user scenarios: listing, creating, retrieving, validating, updating, deleting
 - data stores: listing, downloading, creating
 - tests: listing, running
